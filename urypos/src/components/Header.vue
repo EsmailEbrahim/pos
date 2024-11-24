@@ -57,8 +57,12 @@
               }}</span>
             </div>
 
-            <div
+            <!-- <div
               class="absolute right-4 mt-11 w-36 divide-y divide-gray-100 rounded-lg bg-white text-left shadow dark:bg-gray-700 lg:right-auto"
+              v-show="this.auth.activeDropdown"
+            > -->
+            <div
+              class="absolute right-4 mt-11 w-36 divide-y divide-gray-100 rounded-lg bg-white text-left shadow dark:bg-gray-700 lg:right-4"
               v-show="this.auth.activeDropdown"
             >
               <ul>

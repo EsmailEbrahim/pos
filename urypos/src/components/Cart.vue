@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50 text-lg"
-    v-if="this.invoiceData.invoiceUpdating"
-  >
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50 text-lg" v-if="this.invoiceData.invoiceUpdating">
     Updating Order...
   </div>
   <div class="mt-5 flex">
@@ -17,12 +14,12 @@
       >
         Update
       </button>
-      <!-- <button
+      <button
       class="mr-4 rounded py-2 px-4 shadow"
       @click="this.invoiceData.kotReprint()"
     >
       KOT Reprint
-    </button> -->
+    </button>
       <button
         class="rounded px-4 py-2 shadow"
         v-if="
@@ -36,10 +33,7 @@
       </button>
     </div>
   </div>
-  <div
-    class="flex h-screen items-center justify-center"
-    v-if="this.menu.cart.length === 0"
-  >
+  <div class="flex h-screen items-center justify-center" v-if="this.menu.cart.length === 0">
     <div class="text-center">Nothing to show here</div>
   </div>
 
@@ -149,10 +143,7 @@
     />
   </div>
 
-  <div
-    v-if="this.invoiceData.cancelInvoiceFlag === true"
-    class="fixed inset-0 z-10 mt-20 overflow-y-auto bg-gray-100"
-  >
+  <div v-if="this.invoiceData.cancelInvoiceFlag === true" class="fixed inset-0 z-10 mt-20 overflow-y-auto bg-gray-100">
     <div class="mt-20 flex items-center justify-center">
       <div class="w-full rounded-lg bg-white p-6 shadow-lg md:max-w-md">
         <div class="flex justify-end">
@@ -213,10 +204,7 @@
     </div>
   </div>
 
-  <div
-    v-if="menu.showDialogCart"
-    class="fixed inset-0 z-10 mt-20 overflow-y-auto bg-gray-100"
-  >
+  <div v-if="menu.showDialogCart" class="fixed inset-0 z-10 mt-20 overflow-y-auto bg-gray-100">
     <div class="mt-10 flex items-center justify-center">
       <div class="w-full rounded-lg bg-white p-6 shadow-lg md:max-w-md">
         <div class="flex justify-end">
@@ -289,10 +277,7 @@
     </div>
   </div>
 
-  <div
-    class="mt-4 w-full divide-y divide-gray-200 bg-white"
-    v-if="this.menu.cart.length > 0"
-  >
+  <div class="mt-4 w-full divide-y divide-gray-200 bg-white" v-if="this.menu.cart.length > 0">
     <details>
       <summary class="question w-full cursor-pointer select-none py-3">
         Additional Details

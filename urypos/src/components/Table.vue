@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     class="grid grid-cols-2 md:grid-cols-4"
     :class="[
       {
@@ -7,8 +7,8 @@
         'lg:grid-cols-4': this.auth.cashier,
       },
     ]"
-  >
-    <div class="relative">
+  > -->
+    <!-- <div class="relative">
       <label for="first" class="absolute z-50 ml-2 mt-0.5 bg-white px-2 text-xs"
         >Select Room</label
       >
@@ -42,7 +42,126 @@
         :style="{ transform: this.table.toggleTableType }"
         class="absolute left-0 h-10 w-9 rounded border bg-white transition-transform duration-300 ease-in-out"
       ></div>
+    </div> -->
+
+ <!-- fatma -->
+ <!-- <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-5
+">
+  <div class="relative md:col-span-11">
+    <label
+      for="room"
+      class="absolute z-50 left-3 -top-2.5 bg-white px-2 text-xs text-gray-600"
+    >
+      Select Room
+    </label>
+    <div
+      class="mt-4 flex flex-wrap gap-4"
+    >
+      <button
+        v-for="(room, index) in table.rooms"
+        :key="index"
+        @click="table.selectedRoom = room.name; table.handleRoomChange()"
+        :class="[
+          'px-4 py-2 rounded border text-gray-700',
+          table.selectedRoom === room.name ? 'bg-blue-700 text-white' : 'bg-gray-100 hover:bg-gray-200'
+        ]"
+      >
+        {{ room.name }}
+      </button>
     </div>
+  </div>
+   
+
+
+  // toggole
+
+  <div
+    v-if="!auth.cashier"
+    @click="table.toggleTableTypeSwitch"
+    class="relative md:col-span-1 flex items-center justify-end"
+  >
+    <div
+      class="relative inline-block h-10 w-28 cursor-pointer rounded bg-blue-700 hover:bg-blue-600"
+    >
+      <span
+        class="absolute w-full py-2 text-center text-base font-medium text-white"
+        :class="table.tableTypeClass"
+      >
+        {{ table.tableTypeLabel }}
+      </span>
+      <div
+        :style="{ transform: table.toggleTableType }"
+        class="absolute left-0 h-10 w-9 rounded border bg-white transition-transform duration-300 ease-in-out"
+      ></div>
+    </div>
+  </div>
+</div> -->
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-5">
+  <!-- Select Room Dropdown for small screens (mobile) -->
+  <div class="relative md:hidden">
+    <label for="room" class="absolute z-50 left-3 -top-2.5 bg-white px-2 text-xs text-gray-600">
+      Select Room
+    </label>
+    <select
+      class="relative mt-2 w-full rounded border border-gray-300 bg-gray-50"
+      :class="{ 'mb-3': this.auth.cashier }"
+      id="room"
+      v-model="table.selectedRoom"
+      @change="table.handleRoomChange"
+    >
+      <option v-for="(room, index) in table.rooms" :key="index" :value="room.name">
+        {{ room.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Select Room Buttons for large screens (desktop) -->
+  <div class="relative md:col-span-11 hidden md:block">
+    <label for="room" class="absolute z-50 left-3 -top-2.5 bg-white px-2 text-xs text-gray-600">
+      Select Room
+    </label>
+    <div class="mt-4 flex flex-wrap gap-4">
+      <button
+        v-for="(room, index) in table.rooms"
+        :key="index"
+        @click="table.selectedRoom = room.name; table.handleRoomChange()"
+        :class="[
+          'px-4 py-2 rounded border text-gray-700',
+          table.selectedRoom === room.name ? 'bg-blue-700 text-white' : 'bg-gray-100 hover:bg-gray-200'
+        ]"
+      >
+        {{ room.name }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Toggle Button for Table Type -->
+  <div
+    v-if="!auth.cashier"
+    @click="table.toggleTableTypeSwitch"
+    class="relative md:col-span-1 flex items-center justify-end"
+  >
+    <div class="relative inline-block h-10 w-28 cursor-pointer rounded bg-blue-700 hover:bg-blue-600">
+      <span
+        class="absolute w-full py-2 text-center text-base font-medium text-white"
+        :class="table.tableTypeClass"
+      >
+        {{ table.tableTypeLabel }}
+      </span>
+      <div
+        :style="{ transform: table.toggleTableType }"
+        class="absolute left-0 h-10 w-9 rounded border bg-white transition-transform duration-300 ease-in-out"
+      ></div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- fatma -->
+
+
+
     <div class="relative ml-5" v-if="this.auth.cashier">
       <div class="relative">
         <label
@@ -91,7 +210,8 @@
         </option>
       </select>
     </div>
-  </div>
+ <!-- </div> --> <!-- fatma -->
+ 
   <div v-if="!this.table.isTakeaeay" class="m-auto">
     <div class="flow-root">
       <div

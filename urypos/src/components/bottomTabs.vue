@@ -8,8 +8,10 @@
       class="mx-auto grid h-full max-w-lg font-medium"
       :class="[
         {
-          'grid-cols-4': !auth.cashier,
-          'grid-cols-5': auth.cashier,
+          // 'grid-cols-4': !auth.cashier,
+          // 'grid-cols-5': auth.cashier,
+          'grid-cols-2': !auth.cashier,
+          'grid-cols-3': auth.cashier,
         },
       ]"
     >
@@ -47,6 +49,10 @@
         >
       </router-link>
 
+
+
+
+      
       <router-link
         :to="invoiceData.invoiceUpdating ? '#' : '/Menu'"
         class="group inline-flex flex-col items-center justify-center border-r border-gray-200 px-5 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
@@ -83,7 +89,12 @@
           >Menu</span
         ></router-link
       >
-      <router-link
+
+
+
+
+
+      <!-- <router-link
         :to="invoiceData.invoiceUpdating ? '#' : '/Customer'"
         class="group inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800"
         @click="!this.auth.cashier && this.tabClick.checkActiveTable()"
@@ -118,8 +129,13 @@
           ]"
           >Customer</span
         ></router-link
-      >
-      <router-link
+      > -->
+
+
+
+
+
+      <!-- <router-link
         to="/Cart"
         class="group inline-flex flex-col items-center justify-center border-x border-gray-200 px-5 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
         @click="!this.auth.cashier && this.tabClick.checkActiveTable()"
@@ -152,7 +168,12 @@
           ]"
           >Order</span
         >
-      </router-link>
+      </router-link> -->
+
+
+
+
+
       <router-link
         :to="invoiceData.invoiceUpdating ? '#' : '/recentOrder'"
         v-if="this.auth.cashier"
