@@ -86,9 +86,10 @@ export const useMenuStore = defineStore("menu", {
             return Math.ceil(this.filteredItems.length / this.perPage);
         },
         paginatedItems() {
-            const startIndex = (this.currentPage - 1) * this.perPage;
-            const endIndex = startIndex + this.perPage;
-            return this.filteredItems.slice(startIndex, endIndex);
+            // const startIndex = (this.currentPage - 1) * this.perPage;
+            // const endIndex = startIndex + this.perPage;
+            // return this.filteredItems.slice(startIndex, endIndex);
+            return this.filteredItems;
         },
         pageNumbers() {
             const pageNumbers = [];
