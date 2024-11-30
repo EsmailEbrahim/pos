@@ -21,6 +21,7 @@ export const useTableStore = defineStore("table", {
         previousOrderdCustomer: "",
         invoiceData: useInvoiceDataStore(),
         grandTotal: "",
+        total_qty: "",
         notification: useNotifications(),
         selectedOption: "",
         isTakeAway: "",
@@ -263,6 +264,7 @@ export const useTableStore = defineStore("table", {
                     this.invoicePrinted = this.previousOrder.invoice_printed;
                     this.modifiedTime = this.previousOrder.modified;
                     this.grandTotal = this.previousOrder.grand_total;
+                    this.total_qty = this.previousOrder.items.reduce((sum, item) => sum + item.qty, 0);
                     this.invoiceNo = this.previousOrder.name;
                     this.previousWaiter = this.previousOrder.waiter;
                     if (this.invoiceNo) {

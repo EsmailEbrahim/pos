@@ -118,6 +118,9 @@ export const useMenuStore = defineStore("menu", {
                 }, 0)
                 .toFixed(2);
         },
+        total_qty() {
+            return this.cart.reduce((sum, item) => sum + item.qty, 0);
+        }
     },
     actions: {
         fetchItems() {

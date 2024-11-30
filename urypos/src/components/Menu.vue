@@ -535,7 +535,7 @@
                     <div class="buttons-section grid grid-cols-4 gap-2 p-1 bg-gray-100 border-t border-gray-300 shadow-md">
                         <div class="col-span-1 flex flex-col items-center justify-center bg-white p-1 rounded border border-gray-300">
                             <span class="text-sm text-gray-500">إجمالي الكمية</span>
-                            <span class="text-md font-bold text-gray-700">25</span>
+                            <span class="text-md font-bold text-gray-700">{{ this.menu.total_qty || this.table.total_qty || this.invoiceData.total_qty }}</span>
                         </div>
                         <div class="col-span-1 flex flex-col items-center justify-center bg-white p-1 rounded border border-gray-300">
                             <span class="text-sm text-gray-500">المبلغ الإجمالي</span>
