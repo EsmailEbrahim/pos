@@ -28,6 +28,10 @@
                     <h3 v-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
                         طلب: {{ this.recentOrders.orderNumber }}
                     </h3>
+
+                    <h3 v-if="this.table.invoiceNo || invoiceData.invoiceNumber" :class="['border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
+                        فاتورة: {{ this.table.invoiceNo || invoiceData.invoiceNumber }}
+                    </h3>
                 </div>
 
                 <div>
@@ -152,6 +156,7 @@ import { useTableStore } from "@/stores/Table.js";
 import { useRestaurantSystemSettings } from "@/stores/RestaurantSystemSettings.js";
 import { usetoggleRecentOrder } from "@/stores/recentOrder.js";
 import { useMenuStore } from "@/stores/Menu.js";
+import { useInvoiceDataStore } from "@/stores/invoiceData.js";
 
 export default {
   name: "Header",
@@ -164,8 +169,9 @@ export default {
     const settings = useRestaurantSystemSettings();
     const recentOrders = usetoggleRecentOrder();
     const menu = useMenuStore();
+    const invoiceData = useInvoiceDataStore();
 
-    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu };
+    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu, invoiceData };
   },
   data() {
     return {

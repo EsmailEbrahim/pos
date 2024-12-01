@@ -100,11 +100,11 @@
                         <button type="button"
                             class="mb-2 me-2 inline-flex items-center rounded bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2557D6]/90 focus:outline-none focus:ring-4 focus:ring-[#2557D6]/50 dark:focus:ring-[#2557D6]/50"
                             @click="this.invoiceData.billing(table)">
+                            الفاتورة
                             <svg class="svg-icon mr-2" viewBox="0 0 24 24" width="18" height="18" fill="white">
                                 <path
                                     d="M6 19H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h3V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v4h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm0-2v-1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1h2V9H4v8h2zM8 4v3h8V4H8zm0 13v3h8v-3H8zm-3-7h3v2H5v-2z" />
                             </svg>
-                            Bill
                         </button>
                         <div class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
                             :class="[
@@ -115,7 +115,7 @@
                         this.auth.restrictTableOrder,
                 },
             ]" @click="
-                !this.auth.restrictTableOrder && this.table.routeToCart(table)
+                !this.auth.restrictTableOrder && this.table.routeToMenu(table)
                 ">
                             <svg aria-hidden="true" class="h-10 w-6" fill="currentColor" viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg">

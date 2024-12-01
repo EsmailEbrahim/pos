@@ -267,7 +267,7 @@
                                     },
                                     ]"
                                     @click="
-                                    !this.auth.restrictTableOrder && this.table.routeToCart(table)
+                                    !this.auth.restrictTableOrder && this.table.routeToMenu(table)
                                     "
                                 >
                                     <svg
