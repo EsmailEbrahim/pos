@@ -2,7 +2,7 @@
     <div class="mt-10 flex items-center justify-between">
         <div class="flex items-center">
             <h3 class="mr-3 text-lg font-semibold text-gray-900 dark:text-white">
-                POS Opening Entry
+                إدخال لفتح نقطة البيع
             </h3>
             <span class="me-2 rounded px-2.5 py-0.5 text-sm font-medium" :class="{
                 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300':
@@ -18,26 +18,24 @@
             <button @click="this.posOpen.savePosOpening()"
                 class="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
                 v-if="this.posOpen.posOpencreation">
-                Save
+                حفظ
             </button>
             <button v-if="this.posOpen.posOpenSaved" @click="this.posOpen.showSumbitPosOpenModal()"
                 class="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none">
-                Submit
+                اعتماد
             </button>
         </div>
     </div>
 
     <div class="mb-6 mt-6 grid gap-6 md:grid-cols-2">
         <div>
-            <label for="startDate" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Period Start
-                Date</label>
+            <label for="startDate" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">تاريخ بداية الفترة</label>
             <date-picker v-model:value="this.posOpen.startDate" :default-value="new Date()"
                 class="my-custom-date-picker" type="datetime"></date-picker>
         </div>
         <div>
             <label for="postingDate" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                <label for="postingDate" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Posting
-                    Date</label>
+                <label for="postingDate" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">تاريخ النشر</label>
             </label>
             <input v-model="this.posOpen.postingDate" readonly
                 class="block w-full rounded-md border border-gray-300 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
@@ -47,26 +45,25 @@
     <hr class="my-6 border-t border-gray-300" />
     <div class="mb-6 mt-6 grid gap-6 md:grid-cols-2">
         <div>
-            <label for="company" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Company</label>
+            <label for="company" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">الشركة</label>
             <input type="text" id="company" v-model="this.invoiceData.company"
                 class="b block w-full rounded-md border border-gray-300 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 required />
         </div>
         <div>
-            <label for="cashier" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Cashier</label>
+            <label for="cashier" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">الكاشير</label>
             <input type="text" id="cashier" v-model="this.invoiceData.cashier"
                 class="block w-full rounded-md border border-gray-300 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 required />
         </div>
         <div>
-            <label for="posProfile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">POS
-                Profile</label>
+            <label for="posProfile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">ملف تعريف نقاط البيع</label>
             <input type="text" id="posProfile"
                 class="block w-full rounded-md border border-gray-300 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 v-model="this.invoiceData.posProfile" required />
         </div>
         <div>
-            <label for="branch" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Branch</label>
+            <label for="branch" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">الفرع</label>
             <input type="text" id="branch"
                 class="block w-full rounded-md border border-gray-300 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 v-model="this.invoiceData.branch" required />
@@ -74,15 +71,15 @@
     </div>
     <hr class="my-6 border-t border-gray-300" />
     <h3 class="mb-3 text-base font-semibold text-gray-900 dark:text-white">
-        Opening Balance Details
+        تفاصيل الرصيد الافتتاحي
     </h3>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead class="bg-gray-50 text-base font-semibold uppercase text-gray-900 dark:text-white">
                 <tr>
-                    <th scope="col" class="px-6 py-3">Mode of Payment</th>
-                    <th scope="col" class="px-6 py-3 text-center">Opening Amount</th>
+                    <th scope="col" class="px-6 py-3">طرق الدفع</th>
+                    <th scope="col" class="px-6 py-3 text-center">مبلغ الافتتاح</th>
                     <th scope="col" class="px-6 py-3"></th>
                 </tr>
             </thead>
@@ -122,8 +119,8 @@
         <div class="mt-5 flex items-center justify-center">
             <div class="w-full rounded-lg bg-white p-6 shadow-lg md:max-w-md">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl text-gray-900 dark:text-white">Confirm</h3>
-                    <span class="sr-only">Close</span>
+                    <h3 class="text-xl text-gray-900 dark:text-white">تأكيد</h3>
+                    <span class="sr-only">إغلاق</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" @click="this.posOpen.showSumbitPosOpen = false">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,17 +128,17 @@
                     </svg>
                 </div>
 
-                <h3 class="mt-5 block text-left text-base text-gray-900 dark:text-white">
-                    Permanently Submit{{ this.posOpen.posOpenEntryName }}?
+                <h3 class="mt-5 block text-right text-base text-gray-900 dark:text-white">
+                    اعتماد بشكل نهائي{{ this.posOpen.posOpenEntryName }}?
                 </h3>
-                <div class="flex justify-end">
-                    <button @click="this.posOpen.showSumbitPosOpen = false"
-                        class="mr-3 mt-6 rounded border border-gray-300 bg-gray-50 px-3 py-2">
-                        No
-                    </button>
+                <div class="flex justify-between p-2 px-4">
                     <button @click="this.posOpen.sumbitPosOpening()"
                         class="mt-6 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
-                        Yes
+                        نعم
+                    </button>
+                    <button @click="this.posOpen.showSumbitPosOpen = false"
+                        class="mr-3 mt-6 rounded border border-gray-300 bg-gray-50 px-3 py-2">
+                        لا
                     </button>
                 </div>
             </div>

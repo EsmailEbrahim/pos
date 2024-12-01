@@ -295,7 +295,7 @@
                 class="inset-0 mt-72 flex items-center justify-center"
             >
                 <div class="text-center">
-                    Tables not found. Please set tables for the room
+                    لم يتم العثور على طاولات. الرجاء تعيين طاولات للجناح
                     <span class="font-medium">{{ this.table.selectedRoom }}.</span>
                 </div>
             </div>
@@ -330,16 +330,16 @@
                 </div>
 
                 <h2
-                class="mt-1 block text-left text-xl font-medium text-gray-900 dark:text-white"
+                class="mt-1 block text-right text-xl font-medium text-gray-900 dark:text-white"
                 >
-                Table Transfer
+                تغيير الطاولة
                 </h2>
                 <div class="relative" ref="container">
                 <label
                     for="newTable"
-                    class="mt-6 block text-left text-gray-900 dark:text-white"
+                    class="mt-6 block text-right text-gray-900 dark:text-white"
                 >
-                    New Table
+                    الطاولة الجديدة
                 </label>
                 <input
                     type="text"
@@ -369,9 +369,9 @@
                 </div>
                 <label
                 for="newTable"
-                class="mt-6 block text-left text-gray-900 dark:text-white"
+                class="mt-6 block text-right text-gray-900 dark:text-white"
                 >
-                Current Table
+                الطاولة الحالية
                 </label>
                 <input
                 type="text"
@@ -380,7 +380,7 @@
                 :value="table.tableName"
                 readonly
                 />
-                <div class="flex justify-end">
+                <div class="flex justify-start">
                 <button
                     @click="
                     this.table.showModal = false;
@@ -388,7 +388,7 @@
                     "
                     class="mt-8 rounded bg-blue-700 px-3 py-2 text-white hover:bg-blue-600"
                 >
-                    Transfer
+                    تغيير
                 </button>
                 </div>
             </div>
@@ -420,16 +420,16 @@
                 </svg>
                 </div>
                 <h2
-                class="mt-1 block text-left text-xl font-medium text-gray-900 dark:text-white"
+                class="mt-1 block text-right text-xl font-medium text-gray-900 dark:text-white"
                 >
-                Captain Transfer
+                تغيير الكابتن
                 </h2>
                 <div class="relative" ref="container">
                 <label
                     for="newTable"
-                    class="mt-6 block text-left text-gray-900 dark:text-white"
+                    class="mt-6 block text-right text-gray-900 dark:text-white"
                 >
-                    New Captain
+                    الكابتن الجديد
                 </label>
                 <input
                     type="text"
@@ -459,9 +459,9 @@
                 </div>
                 <label
                 for="newTable"
-                class="mt-6 block text-left text-gray-900 dark:text-white"
+                class="mt-6 block text-right text-gray-900 dark:text-white"
                 >
-                Current Captain
+                الكابتن الحالي
                 </label>
                 <input
                 type="text"
@@ -470,7 +470,7 @@
                 :value="this.table.currentCaptain"
                 readonly
                 />
-                <div class="flex justify-end">
+                <div class="flex justify-start">
                 <button
                     @click="
                     this.table.showModalCaptainTransfer = false;
@@ -478,7 +478,7 @@
                     "
                     class="mt-8 rounded bg-blue-700 px-3 py-2 text-white hover:bg-blue-600"
                 >
-                    Transfer
+                    تغيير
                 </button>
                 </div>
             </div>

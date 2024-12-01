@@ -2,39 +2,38 @@
     <div class="mt-3 flex flex-col md:flex-row">
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50 text-lg"
             v-if="this.invoiceData.isPrinting">
-            Printing Invoice
+            طباعة الفاتورة
         </div>
 
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50 text-lg"
             v-if="this.recentOrders.isLoading">
-            Payment Being Processing
+            جاريٍ معالجة الدفع
         </div>
         <div
             class="max-w-lg flex-1 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800 sm:p-8">
             <div class="mb-4 flex items-center justify-between">
                 <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                    Recent Orders
+                    الطلبات الأخيرة
                 </h5>
             </div>
             <div class="w-full" @click="this.recentOrders.showOrder = false">
                 <input type="search" id="orderSeach"
                     class="block w-full rounded-lg border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    placeholder="Search by Invoice Id or Customer Name" v-model="this.recentOrders.searchOrder" />
+                    placeholder="البحث عن طريق رقم الفاتورة أو اسم العميل" v-model="this.recentOrders.searchOrder" />
                 <select id="status"
                     class="mt-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange">
-                    <option value="Draft">Draft</option>
-                    <option value="Unbilled">Unbilled</option>
-                    <option value="Recently Paid" v-if="auth.viewAllStatus === 0 && invoiceData.paidLimit > 0">Recently
-                        Paid</option>
+                    <option value="Draft">مسودة</option>
+                    <option value="Unbilled">غير مدفوعة</option>
+                    <option value="Recently Paid" v-if="auth.viewAllStatus === 0 && invoiceData.paidLimit > 0">مدفوعة مؤخرًا</option>
                     <option value="Paid" v-if="this.auth.viewAllStatus === 1">
-                        Paid
+                        مدفوعة
                     </option>
                     <option value="Consolidated" v-if="this.auth.viewAllStatus === 1">
-                        Consolidated
+                        تمت تسويتها
                     </option>
                     <option value="Return" v-if="this.auth.viewAllStatus === 1">
-                        Return
+                        مرتجعة
                     </option>
                 </select>
             </div>
@@ -86,14 +85,14 @@
             <div class="mt-4 flex justify-center">
                 <button :class="{ hidden: this.recentOrders.currentPage === 1 }"
                     @click="this.recentOrders.previousPageClick()" class="mr-2 w-[80px] rounded-md border px-2 py-1">
-                    Previous
+                    السابق
                 </button>
                 <button class="mr-2 rounded-md border px-2 py-1">
                     {{ this.recentOrders.currentPage }}
                 </button>
                 <button @click="this.recentOrders.nextPageClick()" v-if="this.recentOrders.next"
                     class="w-[80px] rounded-md border px-2 py-1">
-                    Next
+                    التالي
                 </button>
             </div>
         </div>
@@ -110,7 +109,7 @@
 
                     <p class="mr-2 mt-2 truncate text-sm text-gray-500 dark:text-gray-400"
                         v-if="this.recentOrders.selectedOrder.waiter">
-                        Waiter : {{ this.recentOrders.selectedOrder.waiter }}
+                        النادل : {{ this.recentOrders.selectedOrder.waiter }}
                     </p>
                 </div>
                 <div class="items-center space-x-4 text-right">
@@ -146,7 +145,7 @@
             </div>
             <div class="mb-2 mt-4">
                 <p class="truncate text-lg font-semibold text-gray-900 dark:text-white">
-                    Items
+                    العناصر
                 </p>
             </div>
             <div class="w-full rounded bg-gray-50 p-2">
@@ -172,14 +171,14 @@
             </div>
             <div class="mb-2 mt-5">
                 <p class="truncate text-lg font-semibold text-gray-900 dark:text-white">
-                    Totals
+                    الإجماليات
                 </p>
             </div>
             <div class="w-full rounded bg-gray-50 p-2">
                 <div class="ml-2 mt-2 flex items-center space-x-4">
                     <div class="min-w-2 flex-1">
                         <p class="truncate text-base text-gray-800 dark:text-white">
-                            Net Total
+                            صافي الإجمالي
                         </p>
                     </div>
 
@@ -207,7 +206,7 @@
                 <div class="ml-2 mt-2 flex items-center space-x-4">
                     <div class="min-w-2 flex-1">
                         <p class="truncate text-base font-semibold text-gray-800 dark:text-white">
-                            Grand Total
+                            المجموع الإجمالي
                         </p>
                     </div>
 
@@ -224,7 +223,7 @@
                 <button type="button"
                     class="mb-2 mr-2 rounded-lg border border-gray-400 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     @click="this.invoiceData.printFunction()">
-                    Print Receipt
+                    طباعة الإيصال
                 </button>
             </div>
             <div class="mt-2 rounded px-4 py-2 text-center" v-if="this.recentOrders.selectedStatus === 'Draft' ||
@@ -242,12 +241,12 @@
                     ? this.recentOrders.editOrder()
                     : ''
                 ">
-                    Edit
+                    تعديل
                 </button>
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     @click="this.invoiceData.printFunction()">
-                    Print Receipt
+                    طباعة الإيصال
                 </button>
             </div>
             <div class="mt-2 rounded px-4 py-2 text-center" v-if="this.recentOrders.selectedStatus === 'Draft' ||
@@ -256,7 +255,7 @@
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     @click="this.recentOrders.billing()">
-                    Make Payment
+                    الدفع
                 </button>
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
@@ -274,7 +273,7 @@
                     ? this.recentOrders.showCancelInvoiceModal()
                     : ''
                 ">
-                    Cancel Order
+                    إلغاء الطلب
                 </button>
             </div>
             <div v-if="this.recentOrders.cancelInvoiceFlag === true"
@@ -282,34 +281,34 @@
                 <div class="mt-20 flex items-center justify-center">
                     <div class="w-full rounded-lg bg-white p-6 shadow-lg md:max-w-md">
                         <div class="flex justify-end">
-                            <span class="sr-only">Close</span>
+                            <span class="sr-only">إغلاق</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" @click="this.recentOrders.cancelInvoiceFlag = false">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </div>
-                        <h2 class="mt-1 block text-left text-xl font-medium text-gray-900 dark:text-white">
-                            Are you sure to cancel
+                        <h2 class="mt-1 block text-right text-xl font-medium text-gray-900 dark:text-white">
+                            هل أنت متأكد من الإلغاء
                         </h2>
                         <div class="relative">
-                            <label for="cancelReason" class="mt-6 block text-left text-gray-900 dark:text-white">
-                                Reason
+                            <label for="cancelReason" class="mt-6 block text-right text-gray-900 dark:text-white">
+                                السبب
                             </label>
                             <input type="text" id="cancelReason"
                                 class="mt-4 w-full appearance-none rounded border p-2 leading-tight text-gray-900 shadow focus:outline-none"
                                 v-model="this.recentOrders.cancelReason" />
                         </div>
-                        <div class="flex justify-end">
-                            <button @click="this.recentOrders.cancelInvoiceFlag = false"
-                                class="mr-3 mt-6 rounded border border-gray-300 bg-gray-50 px-3 py-2">
-                                No
-                            </button>
+                        <div class="flex justify-between p-2 px-4">
                             <button @click="
                 this.recentOrders.cancelInvoice();
             this.recentOrders.cancelInvoiceFlag = false;
             " class="mt-6 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
-                                Yes
+                                نعم
+                            </button>
+                            <button @click="this.recentOrders.cancelInvoiceFlag = false"
+                                class="mr-3 mt-6 rounded border border-gray-300 bg-gray-50 px-3 py-2">
+                                لا
                             </button>
                         </div>
                     </div>
@@ -319,46 +318,50 @@
                 <div class="mt-10 flex items-center justify-center">
                     <div class="h-82 w-full rounded-lg bg-white p-6 shadow-lg md:w-3/5">
                         <div class="flex justify-end">
-                            <span class="sr-only">Close</span>
+                            <span class="sr-only">إغلاق</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" @click="this.recentOrders.showPayment = false">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </div>
-                        <h2 class="mt-1 block text-left text-xl font-medium text-gray-900 dark:text-white">
-                            Select Mode Of Payment
+                        <h2 class="mt-1 block text-right text-xl font-medium text-gray-900 dark:text-white">
+                            أختر طريقة الدفع
                         </h2>
                         <div class="mt-8 flex items-center justify-center">
                             <div class="w-full max-w-full overflow-x-auto">
                                 <div class="flex flex-nowrap">
-                                    <div v-for="(
-                      modeOfPayment, index
-                    ) in recentOrders.modeOfPaymentList" :key="index"
-                                        class="mr-4 w-64 flex-shrink-0 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
-                                        <label :for="'modeofPayments-' + index"
-                                            class="block text-left text-lg dark:text-white">
+                                    <div
+                                        v-for="(modeOfPayment, index) in recentOrders.modeOfPaymentList"
+                                        :key="index"
+                                        class="mr-4 w-64 flex-shrink-0 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800"
+                                    >
+                                        <label
+                                            :for="'modeofPayments-' + index"
+                                            class="block text-right text-lg dark:text-white"
+                                        >
                                             {{ modeOfPayment.mode_of_payment }}
                                         </label>
-                                        <input :id="'modeofPayments-' + index" type="number" name="modeofPayments"
+                                        <input
+                                            :id="'modeofPayments-' + index"
+                                            type="number"
+                                            name="modeofPayments"
                                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
-                                            required v-model.number="modeOfPayment.value"
-                                            @click="recentOrders.calculatePaidAmount(modeOfPayment)" @input="
-                recentOrders.changePaidAmount(
-                    modeOfPayment.mode_of_payment,
-                    $event.target.value
-                )
-                      " />
+                                            required
+                                            v-model.number="modeOfPayment.value"
+                                            @click="recentOrders.calculatePaidAmount(modeOfPayment)"
+                                            @input="recentOrders.changePaidAmount(modeOfPayment.mode_of_payment, $event.target.value)"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex justify-end">
-                            <button @click="
-                  this.recentOrders.showPayment = false;
-                  this.recentOrders.makePayment();
-                " class="mt-10 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
-                                Submit
+                        <div class="flex justify-start">
+                            <button
+                                @click="this.recentOrders.showPayment = false; this.recentOrders.makePayment();"
+                                class="mt-10 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+                            >
+                                تأكيد
                             </button>
                         </div>
                     </div>
