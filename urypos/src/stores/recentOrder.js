@@ -21,6 +21,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     netTotal: 0,
     paidAmount: 0,
     grandTotal: 0,
+    total_qty: 0,
     billAmount: 0,
     currentPage: 1,
     paymentMethod: 0,
@@ -407,6 +408,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       this.netTotal = 0;
       this.paidAmount = 0;
       this.grandTotal = 0;
+      this.total_qty = 0;
       this.billAmount = 0;
       this.payments = [];
       this.showOrder = false;

@@ -28,6 +28,10 @@
                     <h3 v-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
                         طلب: {{ this.recentOrders.orderNumber }}
                     </h3>
+
+                    <h3 v-if="this.table.invoiceNo || invoiceData.invoiceNumber" :class="['border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
+                        فاتورة: {{ this.table.invoiceNo || invoiceData.invoiceNumber }}
+                    </h3>
                 </div>
 
                 <div>
@@ -109,7 +113,7 @@
                                     <a
                                         href="#"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        @click="this.auth.logOut"
+                                        @click="this.destroyData.showDestroyModal = true"
                                     >
                                         إتلاف
                                     </a>
@@ -140,6 +144,129 @@
             </div>
         </nav>
     </div>
+
+    <div
+        v-if="this.destroyData.showDestroyModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    >
+        <div
+            class="w-96 rounded-lg bg-white p-5 shadow-lg dark:bg-gray-800"
+            style="max-height: 80vh; overflow: hidden;"
+        >
+            <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-200">
+                حدد عناصر للإتلاف
+            </h2>
+            <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                الرجاء إدخال التفاصيل المطلوبة لتأكيد عملية الإتلاف.
+            </p>
+            
+            <PerfectScrollbar
+                class="overflow-hidden"
+                style="max-height: 60vh; overflow-y: auto;"
+                :options="{ suppressScrollX: true }"
+            >
+                <div class="ml-4 mb-4">
+                    <label for="cart-item" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        اختر العنصر:
+                    </label>
+                    <select
+                        id="cart-item"
+                        v-model="this.destroyData.destroyItem"
+                        class="mb-2 w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                        @change="this.destroyData.updateItem"
+                    >
+                        <option value=""></option>
+                        <option v-for="(item, index) in this.menu.cart" :key="index" :value="item">
+                            {{ item.item_name }} - الكمية: {{ item.qty }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="ml-4 mb-4">
+                    <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        الكمية للإتلاف:
+                    </label>
+                    <input
+                        id="quantity"
+                        type="number"
+                        v-model="this.destroyData.destroyQuantity"
+                        placeholder="أدخل الكمية..."
+                        min="1"
+                        :max="this.destroyData.destroyItem?.quantity || 1"
+                        class="w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                    />
+                </div>
+
+                <div class="ml-4 mb-4">
+                    <label for="accountability" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        اختر المسؤول عن التلف:
+                    </label>
+                    <select
+                        id="accountability"
+                        v-model="this.destroyData.destroyAccountability"
+                        class="mb-2 w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                    >
+                        <option value=""></option>
+                        <option value="Chef">الطباخ</option>
+                        <option value="Captain">الكابتن</option>
+                        <option value="Cashier">الكاشير</option>
+                        <option value="Other">آخر</option>
+                    </select>
+                </div>
+
+                <div class="ml-4 mb-4">
+                    <label for="notes" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        ملاحظات:
+                    </label>
+                    <textarea
+                        id="-notes"
+                        v-model="this.destroyData.destroyNotes"
+                        placeholder="أدخل الملاحظات..."
+                        rows="2"
+                        class="w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                    ></textarea>
+                </div>
+
+                <div class="ml-4 mb-4">
+                    <label for="username" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        اسم المستخدم:
+                    </label>
+                    <input
+                        id="username"
+                        v-model="this.destroyData.destroyUsername"
+                        type="text"
+                        placeholder="اسم المستخدم"
+                        class="mb-2 w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                    />
+                    <label for="password" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        كلمة المرور:
+                    </label>
+                    <input
+                        id="password"
+                        v-model="this.destroyData.destroyPassword"
+                        type="password"
+                        placeholder="كلمة المرور"
+                        class="w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                    />
+                </div>
+            </PerfectScrollbar>
+
+            <div class="flex justify-end space-x-2">
+                <button
+                    @click="this.destroyData.confirmDestroy"
+                    class="rounded bg-blue-600 px-4 py-2 mx-4 text-white hover:bg-blue-700"
+                >
+                    موافق
+                </button>
+                <button
+                    @click="this.destroyData.showDestroyModal = false; this.destroyData.clearDestroyData();"
+                    class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
+                >
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -152,6 +279,8 @@ import { useTableStore } from "@/stores/Table.js";
 import { useRestaurantSystemSettings } from "@/stores/RestaurantSystemSettings.js";
 import { usetoggleRecentOrder } from "@/stores/recentOrder.js";
 import { useMenuStore } from "@/stores/Menu.js";
+import { useInvoiceDataStore } from "@/stores/invoiceData.js";
+import { useDestroyStore } from "@/stores/Destroy.js";
 
 export default {
   name: "Header",
@@ -164,8 +293,10 @@ export default {
     const settings = useRestaurantSystemSettings();
     const recentOrders = usetoggleRecentOrder();
     const menu = useMenuStore();
+    const invoiceData = useInvoiceDataStore();
+    const destroyData = useDestroyStore();
 
-    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu };
+    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu, invoiceData, destroyData };
   },
   data() {
     return {

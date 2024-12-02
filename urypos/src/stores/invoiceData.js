@@ -31,6 +31,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         paidLimit: null,
         print_type: null,
         grandTotal: null,
+        total_qty: null,
         print_format: null,
         cancelReason: null,
         invoiceNumber: null,
@@ -210,6 +211,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         } else {
                             this.invoiceNumber = response.message.name;
                             this.grandTotal = response.message.grand_total;
+                            this.total_qty = response.message.items.reduce((sum, item) => sum + item.qty, 0);
                             this.notification.createNotification("Order Update");
                             this.table.handleRoomChange();
                             this.menu.comments = "";
@@ -270,6 +272,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             this.recentOrders.netTotal = 0;
             this.recentOrders.payments = [];
             this.recentOrders.grandTotal = 0;
+            // this.recentOrders.total_qty = 0;
             this.recentOrders.paidAmount = 0;
             this.recentOrders.billAmount = 0;
             this.menu.aggregatorItem = []
