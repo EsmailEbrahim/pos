@@ -96,7 +96,7 @@
                 </button>
             </div>
         </div>
-        <div class="mt-5 max-w-lg flex-1 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800 sm:p-8 md:ml-10 md:mt-0"
+        <div class="mt-5 max-w-lg flex-1 rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800 sm:p-8 md:ml-4 md:mt-0"
             v-if="this.recentOrders.showOrder">
             <div class="flex items-center space-x-4">
                 <div class="min-w-0 flex-1">
@@ -267,7 +267,7 @@
                     this.recentOrders.invoicePrinted === 1 ||
                     this.recentOrders.selectedStatus === 'Unbilled'
                 ),
-            }" @click="
+                    }" @click="
                 this.recentOrders.invoicePrinted === 0 &&
                     this.recentOrders.selectedStatus === 'Draft'
                     ? this.recentOrders.showCancelInvoiceModal()
@@ -300,10 +300,8 @@
                                 v-model="this.recentOrders.cancelReason" />
                         </div>
                         <div class="flex justify-between p-2 px-4">
-                            <button @click="
-                this.recentOrders.cancelInvoice();
-            this.recentOrders.cancelInvoiceFlag = false;
-            " class="mt-6 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
+                            <button @click="this.recentOrders.cancelInvoice(); this.recentOrders.cancelInvoiceFlag = false;"
+                                class="mt-6 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
                                 نعم
                             </button>
                             <button @click="this.recentOrders.cancelInvoiceFlag = false"
@@ -314,7 +312,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="this.recentOrders.showPayment" class="fixed inset-0 z-10 mt-14 overflow-y-auto bg-gray-100">
+            <!-- <div v-if="this.recentOrders.showPayment" class="fixed inset-0 z-10 mt-14 overflow-y-auto bg-gray-100">
                 <div class="mt-10 flex items-center justify-center">
                     <div class="h-82 w-full rounded-lg bg-white p-6 shadow-lg md:w-3/5">
                         <div class="flex justify-end">
@@ -366,6 +364,54 @@
                         </div>
                     </div>
                 </div>
+            </div> -->
+        </div>
+        <div
+            v-if="this.recentOrders.showPayment"
+            class="max-w-lg flex-1 rounded-lg border border-gray-200 bg-white p-2 shadow dark:border-gray-700 dark:bg-gray-800 sm:p-4"
+        >
+            <div class="mt-1 flex items-center justify-between">
+                <h2 class="block text-right text-xl font-medium text-gray-900 dark:text-white">
+                    أختر طريقة الدفع
+                </h2>
+                <span class="sr-only">إغلاق</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" @click="this.recentOrders.showPayment = false">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <div class="mt-8 grid grid-cols-2 gap-2">
+                <div
+                    v-for="(modeOfPayment, index) in recentOrders.modeOfPaymentList"
+                    :key="index"
+                    class="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800"
+                >
+                    <label
+                        :for="'modeofPayments-' + index"
+                        class="block text-right text-lg dark:text-white mb-1"
+                    >
+                        {{ modeOfPayment.mode_of_payment }}
+                    </label>
+                    <input
+                        :id="'modeofPayments-' + index"
+                        type="number"
+                        name="modeofPayments"
+                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400"
+                        required
+                        v-model.number="modeOfPayment.value"
+                        @click="recentOrders.calculatePaidAmount(modeOfPayment)"
+                        @input="recentOrders.changePaidAmount(modeOfPayment.mode_of_payment, $event.target.value)"
+                    />
+                </div>
+            </div>
+            <div class="flex justify-start">
+                <button
+                    @click="this.recentOrders.showPayment = false; this.recentOrders.makePayment();"
+                    class="mt-10 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 cursor-pointer"
+                >
+                    تأكيد الدفع
+                </button>
             </div>
         </div>
     </div>
