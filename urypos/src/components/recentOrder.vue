@@ -57,10 +57,10 @@
                             <div class="flex-1 items-center text-center">
                                 <p class="text-base font-medium text-gray-900 dark:text-white">
                                     {{
-                recentOrder.restaurant_table
-                    ? recentOrder.restaurant_table
-                    : recentOrder.order_type
-            }}
+                                        recentOrder.restaurant_table
+                                            ? recentOrder.restaurant_table
+                                            : this.menu.orderTypeTranslations[recentOrder.order_type] || recentOrder.order_type
+                                    }}
                                 </p>
                             </div>
                             <div class="flex-1 items-center space-x-4 text-right">
@@ -421,6 +421,7 @@
 import { usetoggleRecentOrder } from "@/stores/recentOrder.js";
 import { useInvoiceDataStore } from "@/stores/invoiceData.js";
 import { useAuthStore } from "@/stores/Auth.js";
+import { useMenuStore } from "@/stores/Menu.js";
 import { Badge } from "flowbite-vue";
 export default {
     name: "RecentOrder",
@@ -431,7 +432,9 @@ export default {
         const recentOrders = usetoggleRecentOrder();
         const invoiceData = useInvoiceDataStore();
         const auth = useAuthStore();
-        return { recentOrders, invoiceData, auth };
+        const menu = useMenuStore();
+
+        return { recentOrders, invoiceData, auth, menu };
     },
     mounted() {
         this.recentOrders.handleStatusChange();

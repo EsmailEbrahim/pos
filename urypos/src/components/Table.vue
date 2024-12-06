@@ -68,8 +68,9 @@
                             <option
                                 v-for="(type, index) in menu.orderType"
                                 :key="index"
+                                :value="type.name"
                             >
-                                {{ type.name }}
+                                {{ type.label }}
                             </option>
                         </select>
                     </div>
@@ -79,7 +80,7 @@
                         for="first"
                         class="absolute right-4 -top-1 z-10 bg-white px-2 text-xs text-gray-600"
                     >
-                        Aggregators قائمة
+                        قائمة {{ menu.orderTypeTranslations['Aggregators'] || 'Aggregators'}}
                     </label>
                     <select
                         class="relative mt-2 w-full rounded border border-gray-300 bg-gray-50"

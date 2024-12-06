@@ -10,6 +10,13 @@ import { useAlert } from "./Alert.js";
 
 export const useMenuStore = defineStore("menu", {
     state: () => ({
+        orderTypeTranslations: {
+            "Dine In": "محلي",
+            "Take Away": "سفري",
+            "Phone In": "طلب عبر الهاتف",
+            "Delivery": "توصيل",
+            "Aggregators": "التطبيقات الوسيطة",
+        },
         cart: [],
         item: [],
         items: [],
@@ -27,6 +34,7 @@ export const useMenuStore = defineStore("menu", {
         aggregatorId: null,
         selectedCourse: null,
         selectedOrderType: null,
+        selectedOrderTypeLabel: null,
         selectedAggregator: null,
         showAll: true,
         displayAll: true,
@@ -164,10 +172,14 @@ export const useMenuStore = defineStore("menu", {
             this.call
                 .get("ury.ury_pos.api.get_select_field_options")
                 .then((result) => {
-                    this.orderType = result.message.filter(
-                        (option) => option.name !== ""
-                    );
+                    this.orderType = result.message
+                    .filter((option) => option.name !== "")
+                    .map((option) => ({
+                        ...option,
+                        label: this.orderTypeTranslations[option.name] || option.name,
+                    }));
                     this.selectedOrderType = result.message[0]['name'];
+                    this.selectedOrderTypeLabel = this.orderTypeTranslations[result.message[0]['name']] || result.message[0]['name'];
                 })
                 .catch((error) => console.error(error));
         },
@@ -197,6 +209,8 @@ export const useMenuStore = defineStore("menu", {
         orderTypeSelection() {
             this.clearPreviousData();
             this.customer.selectedOrderType = this.selectedOrderType;
+
+            this.selectedOrderTypeLabel = this.orderTypeTranslations[this.selectedOrderType];
 
             if (this.selectedOrderType === "Take Away") {
                 this.table.isTakeaeay = true;
@@ -237,7 +251,7 @@ export const useMenuStore = defineStore("menu", {
                             if (error._server_messages) {
                                 const messages = JSON.parse(error._server_messages);
                                 const message = JSON.parse(messages[0]);
-                                this.alert.createAlert("Message", message.message, "OK");
+                                this.alert.createAlert("Message", message.message, "موافق");
                             }
                         });
                 } else {
@@ -251,9 +265,9 @@ export const useMenuStore = defineStore("menu", {
             if (this.selectedOrderType === "Aggregators" && this.cart.length > 0) {
                 this.alert
                     .createAlert(
-                        "Cart Not Empty",
-                        "الرجاء تفريغ محتويات الطلب قبل تحديد aggregator.",
-                        "OK"
+                        "السلة ليست فارغة",
+                        "الرجاء تفريغ محتويات الطلب قبل تحديد تطبيق وسيط.",
+                        "موافق"
                     )
                     .then(() => {
                         window.location.reload();
