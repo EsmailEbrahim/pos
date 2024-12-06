@@ -682,6 +682,9 @@
         },
         mounted() {
             window.scrollTo(0, 0);
+            if (!this.customers.search) {
+                this.customers.search = this.table.default_customer;
+            }
         },
     };
 </script>
