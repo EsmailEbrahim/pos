@@ -61,7 +61,7 @@
                         <input
                             type="search"
                             id="aggregatorId"
-                            placeholder="أدخل مُعرف Aggregator..."
+                            placeholder="أدخل مُعرف التطبيق الوسيط..."
                             class="w-full pr-10 px-2 py-1 border border-gray-300 rounded-md bg-gray-50 text-md font-medium text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                             v-model="this.menu.aggregatorId"
                         />
@@ -682,6 +682,9 @@
         },
         mounted() {
             window.scrollTo(0, 0);
+            if (!this.customers.search) {
+                this.customers.search = this.table.default_customer;
+            }
         },
     };
 </script>

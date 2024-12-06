@@ -12,6 +12,7 @@ export const useTableStore = defineStore("table", {
     state: () => ({
         restaurant_name: null,
         restaurant_image: null,
+        default_customer: null,
         tables: [],
         selectedTable: null,
         previousOrderdItem: [],
@@ -85,6 +86,9 @@ export const useTableStore = defineStore("table", {
             await this.call.get("ury.ury_pos.api.getRestaurantName").then((result) => {
                 this.restaurant_name = result.message.name;
                 this.restaurant_image = result.message.image;
+            });
+            await this.call.get("ury.ury_pos.api.getDefaultCustomer").then((result) => {
+                this.default_customer = result.message.default_customer;
             });
             this.db
                 .getDocList("URY Room", {

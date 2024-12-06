@@ -22,7 +22,7 @@
                     </h3>
 
                     <h3 v-if="this.menu.selectedOrderType" class="mx-4 rounded border border-blue-700 px-2 py-2.5 text-center text-md font-medium text-blue-700">
-                        نوع الطلب: {{ this.menu.selectedOrderType }}
+                        نوع الطلب: {{ this.menu.selectedOrderTypeLabel }}
                     </h3>
 
                     <h3 v-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
