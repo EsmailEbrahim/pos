@@ -251,7 +251,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             if (error._server_messages) {
               const messages = JSON.parse(error._server_messages);
               const message = JSON.parse(messages[0]);
-              this.alert.createAlert("Message", message.message, "OK");
+              this.alert.createAlert("رسالة", message.message, "موافق");
             }
           });
       }
@@ -284,9 +284,9 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
           this.table = this.pastOrder.restaurant_table;
           if (this.invoicePrinted === 0) {
             this.alert.createAlert(
-              "Alert",
-              "Please Print Invoice before Payment",
-              "OK"
+              "تنبيه",
+              "الرجاء طباعة الفاتورة قبل الدفع",
+              "موافق"
             );
             this.isLoading = false;
           } else {
@@ -367,7 +367,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       let r_total = this.grandTotal;
       let diff = r_total - amount;
       if (diff > 5) {
-        this.alert.createAlert("Message", "Round Off Limit Exceeded", "OK");
+        this.alert.createAlert("رسالة", "تم تجاوز الحد الأقصى للتقريب", "موافق");
         this.isLoading = false;
       } else {
         this.call
@@ -376,7 +376,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             invoicePayment
           )
           .then(() => {
-            this.notification.createNotification("Payment Completed");
+            this.notification.createNotification("تم الدفع");
             this.getPosInvoice(this.selectedStatus, 10, 0);
             this.clearData();
           })
@@ -384,7 +384,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             this.isLoading = false;
             const messages = JSON.parse(error._server_messages);
             const message = JSON.parse(messages[0]);
-            this.alert.createAlert("Message", message.message, "OK");
+            this.alert.createAlert("رسالة", message.message, "موافق");
           });
       }
     },
@@ -428,9 +428,9 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             this.cancelReason = "";
           } else {
             this.alert.createAlert(
-              "Message",
-              "You don't Have Permission to Cancel ",
-              "OK"
+              "رسالة",
+              "ليس لديك إذن لإلغاء",
+              "موافق"
             );
             this.cancelInvoiceFlag = false;
             this.cancelReason = "";
@@ -449,7 +449,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       this.call
         .post("ury.ury.doctype.ury_order.ury_order.cancel_order", updatedFields)
         .then(() => {
-          this.notification.createNotification("Invoice Cancelled");
+          this.notification.createNotification("تم إلغاء الفاتورة");
           window.location.reload();
         })
         .catch((error) => console.error(error));

@@ -10,6 +10,12 @@ import frappe from "./frappeSdk.js";
 
 export const useTableStore = defineStore("table", {
     state: () => ({
+        table_statuses_translations: {
+            'Attention': 'انتباه',
+            'Occupied': 'مشغولة',
+            'Free': 'فارغة',
+            'Active': 'مُختارة',
+        },
         restaurant_name: null,
         restaurant_image: null,
         default_customer: null,
@@ -225,17 +231,17 @@ export const useTableStore = defineStore("table", {
         },
         getBadgeText(table) {
             if (table.occupied != 1 && table.name !== this.selectedTable) {
-                return "Free";
+                return this.table_statuses_translations["Free"] || "Free";
             } else if (table.name === this.selectedTable) {
-                return "Active";
+                return this.table_statuses_translations["Active"] || "Active";
             } else if (table.occupied === 1 && table.name !== this.selectedTable) {
                 const timeDifference = this.getTimeDifference(table);
                 const [hours, minutes] = timeDifference.split(":");
                 const totalMinutes = parseInt(hours) * 60 + parseInt(minutes);
                 if (totalMinutes > this.invoiceData.tableAttention) {
-                    return "Attention";
+                    return this.table_statuses_translations["Attention"] || "Attention";
                 } else {
-                    return "Occupied";
+                    return this.table_statuses_translations["Occupied"] || "Occupied";
                 }
             }
         },
@@ -409,7 +415,7 @@ export const useTableStore = defineStore("table", {
                     )
                     .then(() =>
                         this.notification.createNotification(
-                            "Captain Transferred Successfully"
+                            "تم تحويل الكابتن بنجاح"
                         )
                     )
                     .then(() => window.location.reload())
@@ -417,7 +423,7 @@ export const useTableStore = defineStore("table", {
                         if (error._server_messages) {
                             const messages = JSON.parse(error._server_messages);
                             const message = JSON.parse(messages[0]);
-                            this.alert.createAlert("Message", message.message, "OK");
+                            this.alert.createAlert("رسالة", message.message, "موافق");
                         }
                     });
             }
