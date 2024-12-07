@@ -22,29 +22,23 @@
                     placeholder="البحث عن طريق رقم الفاتورة أو اسم العميل" v-model="this.recentOrders.searchOrder" />
                 <select id="status"
                     class="mt-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange">
+                    v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange; this.recentOrders.showPayment = false;">
                     <option value="Draft">مسودة</option>
                     <option value="Unbilled">غير مدفوعة</option>
                     <option value="Recently Paid" v-if="auth.viewAllStatus === 0 && invoiceData.paidLimit > 0">مدفوعة مؤخرًا</option>
-                    <option value="Paid" v-if="this.auth.viewAllStatus === 1">
-                        مدفوعة
-                    </option>
-                    <option value="Consolidated" v-if="this.auth.viewAllStatus === 1">
-                        تمت تسويتها
-                    </option>
-                    <option value="Return" v-if="this.auth.viewAllStatus === 1">
-                        مرتجعة
-                    </option>
+                    <option value="Paid" v-if="this.auth.viewAllStatus === 1">مدفوعة</option>
+                    <option value="Consolidated" v-if="this.auth.viewAllStatus === 1">تمت تسويتها</option>
+                    <option value="Return" v-if="this.auth.viewAllStatus === 1">مرتجعة</option>
                 </select>
             </div>
             <div class="flow-root">
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <li class="mt-2 py-3 sm:py-4" :class="{
-                'bg-gray-200': this.recentOrders.setBackground === index,
-            }" v-for="(recentOrder, index) in this.recentOrders.filteredOrders" :key="recentOrder.name" @click="
-                this.recentOrders.viewRecentOrder(recentOrder);
-            this.recentOrders.setBackground = index;
-            ">
+                            'bg-gray-200': this.recentOrders.setBackground === index,
+                        }"
+                        v-for="(recentOrder, index) in this.recentOrders.filteredOrders" :key="recentOrder.name"
+                        @click="this.recentOrders.viewRecentOrder(recentOrder); this.recentOrders.setBackground = index; this.recentOrders.showPayment = false;"
+                    >
                         <div class="flex items-center space-x-4">
                             <div class="flex-1">
                                 <p class="truncate text-base font-medium text-gray-900 dark:text-white">
