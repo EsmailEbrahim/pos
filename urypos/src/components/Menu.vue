@@ -553,7 +553,7 @@
                             >
                         </div>
 
-                        <div class="col-span-2"  v-if="this.recentOrders.orderNumber === 'جديد'">
+                        <div class="col-span-2"  v-if="this.recentOrders.orderNumber === 'جديد' && (!this.table.invoiceNo && !invoiceData.invoiceNumber)">
                             <button
                                 class="w-full py-3 text-white bg-blue-500 hover:bg-blue-600 rounded transition"
                                 :disabled="this.menu.cart.length === 0"

@@ -10,6 +10,12 @@ import frappe from "./frappeSdk.js";
 
 export const usetoggleRecentOrder = defineStore("recentOrders", {
   state: () => ({
+    invoice_statuses_translations: {
+      'Draft': 'مسودة',
+      'Paid': 'مدفوعة',
+      'Consolidated': 'تمت تسويتها',
+      'Return': 'مرتجعة',
+  },
     payments: [],
     pastOrder: [],
     texDetails: [],
@@ -26,7 +32,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     currentPage: 1,
     paymentMethod: 0,
     editPrintedInvoice: 0,
-    selectedStatus: "Draft",
+    selectedStatus: "Unbilled",
     posProfile: "",
     searchOrder: "",
     customerNameForBilling: "",
@@ -396,7 +402,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
         item.comment = "";
         item.qty = "";
       });
-      this.selectedStatus = "Draft";
+      this.selectedStatus = "Unbilled";
       this.menu.cart = [];
       this.draftInvoice = "";
       this.customers.selectedOrderType = "";

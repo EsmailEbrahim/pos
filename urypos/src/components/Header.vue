@@ -29,12 +29,12 @@
                         نوع الطلب: {{ this.menu.selectedOrderTypeLabel }}
                     </h3>
 
-                    <h3 v-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
-                        طلب: {{ this.recentOrders.orderNumber }}
-                    </h3>
-
                     <h3 v-if="this.table.invoiceNo || invoiceData.invoiceNumber" :class="['border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
                         فاتورة: {{ this.table.invoiceNo || invoiceData.invoiceNumber }}
+                    </h3>
+
+                    <h3 v-else-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
+                        طلب: {{ this.recentOrders.orderNumber }}
                     </h3>
                 </div>
 
