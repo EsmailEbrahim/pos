@@ -17,7 +17,7 @@
                 </button>
             </div>
             <PerfectScrollbar :options="{ suppressScrollX: true }">
-                <div class="course-list grid grid-cols-1 gap-2 mt-1 pl-4">
+                <div class="course-list grid grid-cols-2 gap-1 mt-1 pl-4">
                     <button v-for="(course, index) in menu.course" :key="index"
                         class="focus:shadow-outline rounded-md bg-blue-700 px-2 py-2 text-center font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring focus:ring-blue-300"
                         type="button" :class="{ 'bg-blue-900': this.menu.selectedCourse === course.name }"
@@ -700,7 +700,7 @@
         top: 65px;
         bottom: 70px;
         right: 0;
-        width: 125px;
+        width: 200px;
         display: flex;
         flex-direction: column;
     }
@@ -722,10 +722,10 @@
         position: fixed;
         top: 65px;
         bottom: 65px;
-        right: 125px;
+        right: 200px;
 
         display: flex;
-        width: calc(100% - 125px);
+        width: calc(100% - 200px);
     }
 
     .section-left {
