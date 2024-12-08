@@ -88,9 +88,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                                 .catch((error) => {
                                     if (error._server_messages) {
                                         this.alert.createAlert(
-                                            "Message",
+                                            "رسالة",
                                             "You do not have Read or Select Permissions for Currency",
-                                            "OK"
+                                            "موافق"
                                         );
                                     }
                                 });
@@ -98,9 +98,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         .catch((error) => {
                             if (error._server_messages) {
                                 this.alert.createAlert(
-                                    "Message",
+                                    "رسالة",
                                     "You do not have Read or Select Permissions for Company",
-                                    "OK"
+                                    "موافق"
                                 );
                             }
                         });
@@ -109,7 +109,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 if (error._server_messages) {
                     const messages = JSON.parse(error._server_messages);
                     const message = JSON.parse(messages[0]);
-                    this.alert.createAlert("Message", message.message, "OK");
+                    this.alert.createAlert("رسالة", message.message, "موافق");
                 }
             }
             this.call
@@ -174,18 +174,18 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             };
             if (!this.auth.cashier && !numberOfPax) {
                 this.alert.createAlert(
-                    "Message",
+                    "رسالة",
                     "Please Select Customer / No of Pax",
-                    "OK"
+                    "موافق"
                 );
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else if (!this.auth.cashier && !selectedTables) {
-                this.alert.createAlert("Message", "Please Select a Table", "OK");
+                this.alert.createAlert("رسالة", "Please Select a Table", "موافق");
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else if (this.auth.cashier && !ordeType && !selectedTables) {
-                this.alert.createAlert("Message", "Please Select Order Type", "OK");
+                this.alert.createAlert("رسالة", "Please Select Order Type", "موافق");
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else {
@@ -202,7 +202,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                             const message = JSON.parse(messages[0]);
 
                             this.alert
-                                .createAlert("Message", message.message, "OK")
+                                .createAlert("رسالة", message.message, "موافق")
                                 .then(() => {
                                     router.push("/Table").then(() => {
                                         window.location.reload();
@@ -212,7 +212,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                             this.invoiceNumber = response.message.name;
                             this.grandTotal = response.message.grand_total;
                             this.total_qty = response.message.items.reduce((sum, item) => sum + item.qty, 0);
-                            this.notification.createNotification("Order Update");
+                            this.notification.createNotification("تم تحديث الطلب");
                             this.table.handleRoomChange();
                             this.menu.comments = "";
                             let items = this.menu.items;
@@ -231,6 +231,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                                 router.push("/recentOrder").then(() => {
                                     this.recentOrders.viewRecentOrder(response.message);
                                     this.clearDataAfterUpdate();
+                                    this.menu.pickOrderType();
                                 });
                             }
                         }
@@ -241,7 +242,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         if (error._server_messages) {
                             const messages = JSON.parse(error._server_messages);
                             const message = JSON.parse(messages[0]);
-                            this.alert.createAlert("Message", message.message, "OK");
+                            this.alert.createAlert("رسالة", message.message, "موافق");
                         }
                     });
             }
@@ -300,10 +301,10 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         this.auth.sessionUser !== result.message.waiter
                     ) {
                         this.alert.createAlert(
-                            "Message",
-                            "Printing is Blocked Table is assigned to " +
+                            "رسالة",
+                            "تم حظر الطباعة، الطاولة مسندة إلى " +
                             result.message.waiter,
-                            "OK"
+                            "موافق"
                         );
                     } else {
                         this.isPrinting = true;
@@ -333,16 +334,16 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     if (!result?.message?.html) {
                         this.isPrinting = false;
                         this.alert.createAlert(
-                            "Message",
+                            "رسالة",
                             "Error while getting the HTML document to print for QZ",
-                            "OK"
+                            "موافق"
                         );
                     }
 
                     const print = await printWithQz(this.qz_host, result?.message?.html);
 
                     if (print === "printed") {
-                        this.notification.createNotification("Print Successful");
+                        this.notification.createNotification("تمت الطباعة بنجاح");
                         const updatePrintTable = {
                             invoice: invoiceNo,
                         };
@@ -374,7 +375,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         do {
                             const res = await printingCall();
                             if (res === "Success") {
-                                this.notification.createNotification("Print Successful");
+                                this.notification.createNotification("تمت الطباعة بنجاح");
                                 const sendObj = {
                                     invoice: invoiceNo,
                                 };
@@ -390,9 +391,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         } while (i < 1);
                         throw {
                             alert: this.alert.createAlert(
-                                "Message",
+                                "رسالة",
                                 `Message:${errorMessage}`,
-                                "OK"
+                                "موافق"
                             ),
                             custom: (this.isPrinting = false),
                         };
@@ -413,7 +414,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         do {
                             const res = await networkPrintPrintingCall();
                             if (res === "Success") {
-                                this.notification.createNotification("Print Successful");
+                                this.notification.createNotification("تمت الطباعة بنجاح");
                                 const sendObj = {
                                     invoice: invoiceNo,
                                 };
@@ -429,9 +430,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         } while (i < 1);
                         throw {
                             alert: this.alert.createAlert(
-                                "Message",
+                                "رسالة",
                                 `Message:${errorMessage}`,
-                                "OK"
+                                "موافق"
                             ),
                             custom: (this.isPrinting = false),
                         };
@@ -445,8 +446,16 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.call
                         .post("ury.ury.api.ury_print.print_pos_page", sendObj)
                         .then((result) => {
-                            this.notification.createNotification("Print Successful");
-                            window.location.reload();
+                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            // window.location.reload();
+                            router.push("/recentOrder").then(() => {
+                                this.isPrinting = false;
+                                this.table.handleRoomChange();
+                                this.recentOrders.selectedStatus = "Draft";
+                                this.recentOrders.handleStatusChange();
+                                // this.recentOrders.viewRecentOrder(recentOrder); // handle setting the invoice of the table
+                                // this.recentOrders.showPayment = true; // after setting the invoice of the table incomment it
+                            });
 
                             return result.message;
                         })
@@ -456,7 +465,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 if (e?.custom) {
                     this.isPrinting = false;
 
-                    return this.alert.createAlert("Error", e?.title, "OK");
+                    return this.alert.createAlert("خطأ", e?.title, "موافق");
                 }
             }
         },
@@ -466,9 +475,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 const res = await loadQzPrinter(url, qz_host);
                 print(qz_host);
                 if (res === "success")
-                    this.notification.createNotification("Printer loaded");
+                    this.notification.createNotification("تم تحميل الطابعة");
             } catch (err) {
-                this.alert.createAlert("Message", err.message, "OK");
+                this.alert.createAlert("رسالة", err.message, "موافق");
             }
         },
 
@@ -481,9 +490,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         this.cancelReason = "";
                     } else {
                         this.alert.createAlert(
-                            "Message",
-                            "You don't Have Permission to Cancel ",
-                            "OK"
+                            "رسالة",
+                            "ليس لديك إذن للإلغاء",
+                            "موافق"
                         );
                         this.cancelInvoiceFlag = false;
                         this.cancelReason = "";
@@ -507,7 +516,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             this.call
                 .post("ury.ury.doctype.ury_order.ury_order.cancel_order", updatedFields)
                 .then(() => {
-                    this.notification.createNotification("Invoice Cancelled");
+                    this.notification.createNotification("تم إلغاء الفاتورة");
                     router.push("/Table").then(() => {
                         window.location.reload();
                     });

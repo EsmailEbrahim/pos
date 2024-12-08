@@ -10,6 +10,12 @@ import frappe from "./frappeSdk.js";
 
 export const usetoggleRecentOrder = defineStore("recentOrders", {
   state: () => ({
+    invoice_statuses_translations: {
+      'Draft': 'مسودة',
+      'Paid': 'مدفوعة',
+      'Consolidated': 'تمت تسويتها',
+      'Return': 'مرتجعة',
+  },
     payments: [],
     pastOrder: [],
     texDetails: [],
@@ -26,7 +32,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     currentPage: 1,
     paymentMethod: 0,
     editPrintedInvoice: 0,
-    selectedStatus: "Draft",
+    selectedStatus: "Unbilled",
     posProfile: "",
     searchOrder: "",
     customerNameForBilling: "",
@@ -151,7 +157,8 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       if (recentOrder.name === this.invoiceNumber) return;
       this.orderType = recentOrder.order_type;
       this.netTotal = recentOrder.net_total;
-      this.grandTotal = recentOrder.rounded_total;
+      this.grandTotal = recentOrder.grand_total;
+      // this.grandTotal = recentOrder.rounded_total;
       this.invoiceNumber = recentOrder.name;
       this.selectedOrder = recentOrder;
       this.selectedTable = recentOrder.restaurant_table;
@@ -250,7 +257,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             if (error._server_messages) {
               const messages = JSON.parse(error._server_messages);
               const message = JSON.parse(messages[0]);
-              this.alert.createAlert("Message", message.message, "OK");
+              this.alert.createAlert("رسالة", message.message, "موافق");
             }
           });
       }
@@ -283,9 +290,9 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
           this.table = this.pastOrder.restaurant_table;
           if (this.invoicePrinted === 0) {
             this.alert.createAlert(
-              "Alert",
-              "Please Print Invoice before Payment",
-              "OK"
+              "تنبيه",
+              "الرجاء طباعة الفاتورة قبل الدفع",
+              "موافق"
             );
             this.isLoading = false;
           } else {
@@ -366,7 +373,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       let r_total = this.grandTotal;
       let diff = r_total - amount;
       if (diff > 5) {
-        this.alert.createAlert("Message", "Round Off Limit Exceeded", "OK");
+        this.alert.createAlert("رسالة", "تم تجاوز الحد الأقصى للتقريب", "موافق");
         this.isLoading = false;
       } else {
         this.call
@@ -375,7 +382,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             invoicePayment
           )
           .then(() => {
-            this.notification.createNotification("Payment Completed");
+            this.notification.createNotification("تم الدفع");
             this.getPosInvoice(this.selectedStatus, 10, 0);
             this.clearData();
           })
@@ -383,7 +390,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             this.isLoading = false;
             const messages = JSON.parse(error._server_messages);
             const message = JSON.parse(messages[0]);
-            this.alert.createAlert("Message", message.message, "OK");
+            this.alert.createAlert("رسالة", message.message, "موافق");
           });
       }
     },
@@ -395,7 +402,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
         item.comment = "";
         item.qty = "";
       });
-      this.selectedStatus = "Draft";
+      this.selectedStatus = "Unbilled";
       this.menu.cart = [];
       this.draftInvoice = "";
       this.customers.selectedOrderType = "";
@@ -427,9 +434,9 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             this.cancelReason = "";
           } else {
             this.alert.createAlert(
-              "Message",
-              "You don't Have Permission to Cancel ",
-              "OK"
+              "رسالة",
+              "ليس لديك إذن لإلغاء",
+              "موافق"
             );
             this.cancelInvoiceFlag = false;
             this.cancelReason = "";
@@ -448,7 +455,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       this.call
         .post("ury.ury.doctype.ury_order.ury_order.cancel_order", updatedFields)
         .then(() => {
-          this.notification.createNotification("Invoice Cancelled");
+          this.notification.createNotification("تم إلغاء الفاتورة");
           window.location.reload();
         })
         .catch((error) => console.error(error));

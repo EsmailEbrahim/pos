@@ -9,7 +9,11 @@
                 v-if="!this.tabClick.isLoginPage"
                 class="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between p-2"
             >
-                <a :href="'/urypos'" class="flex items-center justify-between">
+                <a :href="'/urypos'" class="flex items-center justify-between" v-if="system_settings.restaurant_system_settings.show_erpnext_pos_logo">
+                    <img v-if="system_settings.restaurant_system_settings.show_erpnext_pos_logo" :src="ERPNextPosLogoPath" alt="" class="h-11 w-auto"/>
+                </a>
+
+                <a :href="'/urypos'" class="flex items-center justify-between" v-else>
                     <img v-if="system_settings.restaurant_system_settings.show_restaurant_image && this.table.restaurant_image" :src="this.table.restaurant_image" alt="" class="h-10 w-10"/>
                     <img v-else-if="system_settings.restaurant_system_settings.show_system_logo" :src="PosSystemLogoPath" alt="" class="h-10 w-10"/>
                     <p v-if="system_settings.restaurant_system_settings.show_restaurant_name" class="text-blue-700 text-2xl lg:text-3xl md:text-3xl font-bold mx-2"> {{ this.table.restaurant_name || "Restaurant POS" }} </p>
@@ -25,12 +29,12 @@
                         نوع الطلب: {{ this.menu.selectedOrderTypeLabel }}
                     </h3>
 
-                    <h3 v-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
-                        طلب: {{ this.recentOrders.orderNumber }}
-                    </h3>
-
                     <h3 v-if="this.table.invoiceNo || invoiceData.invoiceNumber" :class="['border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
                         فاتورة: {{ this.table.invoiceNo || invoiceData.invoiceNumber }}
+                    </h3>
+
+                    <h3 v-else-if="this.recentOrders.orderNumber" :class="[this.recentOrders.orderNumber === 'جديد' ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500', 'mx-4 rounded border px-2 py-2.5 text-center text-md font-medium']">
+                        طلب: {{ this.recentOrders.orderNumber }}
                     </h3>
                 </div>
 
@@ -137,7 +141,11 @@
                 v-else
                 class="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between p-4"
             >
-                <a :href="'/urypos'" class="flex items-center justify-between">
+                <a :href="'/urypos'" class="flex items-center justify-between" v-if="system_settings.restaurant_system_settings.show_erpnext_pos_logo_login">
+                    <img v-if="system_settings.restaurant_system_settings.show_erpnext_pos_logo_login" :src="ERPNextPosLogoPath" alt="" class="h-12 w-auto"/>
+                </a>
+
+                <a :href="'/urypos'" class="flex items-center justify-between" v-else>
                     <img v-if="system_settings.restaurant_system_settings.show_system_logo_in_header" :src="PosSystemLogoPath" alt="" class="h-10 w-10"/>
                     <p v-if="system_settings.restaurant_system_settings.show_system_name_in_login_header" class="text-blue-700 text-2xl lg:text-3xl md:text-3xl font-bold mx-2"> {{ system_settings.restaurant_system_settings.system_name || "Restaurant POS" }} </p>
                 </a>
@@ -274,6 +282,7 @@ import { useAuthStore } from "@/stores/Auth.js";
 import { posOpening } from "@/stores/posOpening.js";
 import { posClosing } from "@/stores/posClosing.js";
 import PosSystemLogo from "@/assets/logos/trilogy_icon.png";
+import ERPNextPosLogo from "@/assets/logos/erpnext_pos_logo.jpg";
 import { tabFunctions } from "@/stores/bottomTabs.js";
 import { useTableStore } from "@/stores/Table.js";
 import { useRestaurantSystemSettings } from "@/stores/RestaurantSystemSettings.js";
@@ -301,6 +310,7 @@ export default {
   data() {
     return {
         PosSystemLogoPath: PosSystemLogo,
+        ERPNextPosLogoPath: ERPNextPosLogo,
         system_settings: this.settings,
     };
   },
