@@ -6,3 +6,9 @@ tags
 ury_pos/docs/current
 node_modules/
 urypos/node_modules/
+
+
+# #####################################################################
+ury_pos/www/urypos.html
+ury_pos/public/urypos/*
+# #####################################################################
