@@ -282,6 +282,8 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             this.recentOrders.selectedTable = "";
             this.customers.selectedOrderType = "";
             this.menu.selectedOrderType = "";
+            this.recentOrders.selectedStatus = "Unbilled";
+            this.recentOrders.handleStatusChange();
         },
         billing(table) {
             let tables = table.name;
