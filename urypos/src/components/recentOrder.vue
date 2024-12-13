@@ -239,7 +239,7 @@
                 </button>
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                    @click="this.invoiceData.printFunction()">
+                    @click="this.invoiceData.printFunction(true)">
                     طباعة الإيصال
                 </button>
             </div>

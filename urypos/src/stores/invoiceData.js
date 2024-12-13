@@ -310,12 +310,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         );
                     } else {
                         this.isPrinting = true;
-                        this.printFunction();
+                        this.printFunction(false, this.tableInvoiceNo);
                     }
                 })
                 .catch((error) => console.error(error));
         },
-        printFunction: async function () {
+        printFunction: async function (isFromRecentOrders = false, tableInvoiceName = '') {
             this.isPrinting = true;
             let invoiceNo =
                 this.recentOrders.invoiceNumber ||
@@ -450,13 +450,32 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         .then((result) => {
                             this.notification.createNotification("تمت الطباعة بنجاح");
                             // window.location.reload();
+                            if(isFromRecentOrders) {
+                                this.recentOrders.invoicePrinted = 1;
+                            }
                             router.push("/recentOrder").then(() => {
                                 this.isPrinting = false;
                                 this.table.handleRoomChange();
                                 this.recentOrders.selectedStatus = "Draft";
-                                this.recentOrders.handleStatusChange();
-                                // this.recentOrders.viewRecentOrder(recentOrder); // handle setting the invoice of the table
-                                // this.recentOrders.showPayment = true; // after setting the invoice of the table incomment it
+                                this.recentOrders.handleStatusChange().then(() => {
+                                    if(tableInvoiceName) {
+                                        let RecentOrderList = [];
+                                        this.call
+                                            .get("ury.ury_pos.api.getPosInvoice", {status: 'Draft', limit: 50, limit_start: 0})
+                                            .then((result) => {
+                                                RecentOrderList = result.message.data;
+                                                
+                                                let recentOrderObject = RecentOrderList.find((order) =>
+                                                    order.name == tableInvoiceName
+                                                );
+                                                if(recentOrderObject) {
+                                                    recentOrderObject.invoice_printed = 1;
+                                                    this.recentOrders.viewRecentOrder(recentOrderObject);
+                                                }
+                                            })
+                                            .catch((error) => console.error(error));
+                                    }
+                                });
                             });
 
                             return result.message;
