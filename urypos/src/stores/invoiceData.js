@@ -191,7 +191,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else if (this.auth.cashier && !ordeType && !selectedTables) {
-                this.alert.createAlert("رسالة", "Please Select Order Type", "موافق");
+                this.alert.createAlert("رسالة", "الرجاء تحديد نوع الطلب", "موافق");
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else {
