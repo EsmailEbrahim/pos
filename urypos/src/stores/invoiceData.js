@@ -172,16 +172,22 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 comments: this.menu.comments,
                 room: this.table.selectedRoom,
             };
-            if (!this.auth.cashier && !numberOfPax) {
+            // if (!this.auth.cashier && !numberOfPax) {
+            if (!numberOfPax && ordeType == 'Dine In') {
                 this.alert.createAlert(
                     "رسالة",
-                    "Please Select Customer / No of Pax",
+                    "الرجاء تحديد عدد الأشخاص",
                     "موافق"
                 );
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
-            } else if (!this.auth.cashier && !selectedTables) {
-                this.alert.createAlert("رسالة", "Please Select a Table", "موافق");
+            // } else if (!this.auth.cashier && !selectedTables) {
+            } else if (!selectedTables && ordeType == 'Dine In') {
+                this.alert.createAlert(
+                    "رسالة",
+                    "الرجاء تحديد طاولة",
+                    "موافق"
+                );
                 this.showUpdateButtton = true;
                 this.invoiceUpdating = false;
             } else if (this.auth.cashier && !ordeType && !selectedTables) {
