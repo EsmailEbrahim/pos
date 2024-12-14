@@ -15,7 +15,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       'Paid': 'مدفوعة',
       'Consolidated': 'تمت تسويتها',
       'Return': 'مرتجعة',
-  },
+    },
     payments: [],
     pastOrder: [],
     texDetails: [],
@@ -88,6 +88,12 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     },
   },
   actions: {
+    addModeOfPaymentToList(modeOfPayment) {
+      if (this.modeOfPaymentList.length > 0) {
+        const lastSequence = this.modeOfPaymentList[this.modeOfPaymentList.length - 1].sequence;
+        this.modeOfPaymentList.push({mode_of_payment: modeOfPayment.mode_of_payment, opening_amount: 0, sequence: lastSequence + 1});
+      }
+    },
     async getPosInvoice(selectedStatus, limit, startLimit) {
       const recentOrder = {
         status: selectedStatus,
@@ -251,7 +257,14 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
         this.call
           .get("ury.ury_pos.api.getAggregatorMOP", aggregator)
           .then((result) => {
-            this.modeOfPaymentList = result.message;
+            this.modeOfPaymentList = result.message.map((item, index) => {
+              return {
+                ...item,
+                sequence: index + 1,
+              };
+            });
+
+            // this.modeOfPaymentList = result.message;
           })
           .catch((error) => {
             if (error._server_messages) {
@@ -280,7 +293,14 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             this.call
               .get("ury.ury_pos.api.getModeOfPayment")
               .then((result) => {
-                this.modeOfPaymentList = result.message;
+                this.modeOfPaymentList = result.message.map((item, index) => {
+                  return {
+                    ...item,
+                    sequence: index + 1,
+                  };
+                });
+
+                // this.modeOfPaymentList = result.message;
               })
               .catch((error) => {
                 // console.error(error)
@@ -308,20 +328,21 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       if (balanceAmount > 0) {
         paymentMethod.value = balanceAmount;
         this.paymentMethod = paymentMethod.value;
-        let existingEntryIndex = this.payments.findIndex(
-          (entry) => entry.mode_of_payment === paymentMethod.mode_of_payment
+        let existingEntrySequence = this.payments.findIndex(
+          (entry) => entry.sequence === paymentMethod.sequence
         );
 
         if (this.paymentMethod > 0) {
           // Only proceed if payment is greater than 0
-          if (existingEntryIndex !== -1) {
+          if (existingEntrySequence !== -1) {
             // Update the existing payment entry
-            this.payments[existingEntryIndex].amount = this.paymentMethod;
+            this.payments[existingEntrySequence].amount = this.paymentMethod;
           } else {
             // Add a new payment entry if not found
             let paidAmount = {
               mode_of_payment: paymentMethod.mode_of_payment,
               amount: this.paymentMethod,
+              sequence: paymentMethod.sequence,
             };
             this.payments.push(paidAmount);
           }
@@ -329,30 +350,31 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       }
     },
 
-    changePaidAmount(name, value) {
+    changePaidAmount(name, sequence, value) {
       this.modeOfPaymentName = name;
       this.paidAmount = parseFloat(value) || 0;
 
-      let existingEntryIndex = this.payments.findIndex(
-        (entry) => entry.mode_of_payment === this.modeOfPaymentName
+      let existingEntrySequence = this.payments.findIndex(
+        (entry) => entry.sequence === sequence
       );
 
       if (this.paidAmount > 0) {
         // Only add payment if it's greater than 0
-        if (existingEntryIndex !== -1) {
+        if (existingEntrySequence !== -1) {
           // Update the amount for an existing payment method
-          this.payments[existingEntryIndex].amount = this.paidAmount;
+          this.payments[existingEntrySequence].amount = this.paidAmount;
         } else {
           // Add a new payment entry if not found
           let paidAmount = {
             mode_of_payment: this.modeOfPaymentName,
             amount: this.paidAmount,
+            sequence: sequence,
           };
           this.payments.push(paidAmount);
         }
-      } else if (existingEntryIndex !== -1) {
+      } else if (existingEntrySequence !== -1) {
         // Optionally remove the payment if the amount is 0
-        this.payments.splice(existingEntryIndex, 1);
+        this.payments.splice(existingEntrySequence, 1);
       }
     },
 
@@ -372,16 +394,26 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       let amount = pay.reduce((total, obj) => obj.amount + total, 0);
       let r_total = this.grandTotal;
       let diff = r_total - amount;
-      if (diff > 5) {
-        this.alert.createAlert("رسالة", "تم تجاوز الحد الأقصى للتقريب", "موافق");
+      // if (diff > 5) {
+      //   this.alert.createAlert("رسالة", "تم تجاوز الحد الأقصى للتقريب", "موافق");
+      //   this.isLoading = false;
+      // }
+      if (diff > 0) {
+        this.alert.createAlert("تحذير", "المبلغ المدفوع أصغر من المبلغ المطلوب", "موافق");
         this.isLoading = false;
-      } else {
+      }
+      else if (diff < 0) {
+        this.alert.createAlert("تحذير", "المبلغ المدفوع أكبر من المبلغ المطلوب", "موافق");
+        this.isLoading = false;
+      }
+      else {
         this.call
           .post(
             "ury.ury.doctype.ury_order.ury_order.make_invoice",
             invoicePayment
           )
           .then(() => {
+            this.showPayment = false;
             this.notification.createNotification("تم الدفع");
             this.getPosInvoice(this.selectedStatus, 10, 0);
             this.clearData();

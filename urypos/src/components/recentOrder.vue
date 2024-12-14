@@ -103,18 +103,15 @@
 
                     <p class="mr-2 mt-2 truncate text-sm text-gray-500 dark:text-gray-400"
                         v-if="this.recentOrders.selectedOrder.waiter">
-                        النادل : {{ this.recentOrders.selectedOrder.waiter }}
+                        الكاشير: {{ this.recentOrders.selectedOrder.waiter }}
                     </p>
                 </div>
                 <div class="items-center space-x-4 text-right">
                     <div class="min-w-0 flex-1">
                         <p class="mr-2 truncate text-xl font-semibold text-gray-900 dark:text-white">
+                            <span class="text-sm text-gray-500">المدفوع: </span>
+                            {{ this.recentOrders.selectedOrder.status === "Draft" ? "0.00" : this.recentOrders.selectedOrder.grand_total }}
                             {{ this.invoiceData.currency }}
-                            {{
-                this.recentOrders.selectedOrder.status === "Draft"
-                    ? "0.00"
-                    : this.recentOrders.selectedOrder.grand_total
-            }}
                         </p>
                         <p class="mr-2 mt-2 truncate text-sm text-gray-500 dark:text-gray-400">
                             {{ this.recentOrders.selectedOrder.name }}
@@ -122,9 +119,9 @@
 
                         <div class="ml-5 mt-2">
                             <Badge :type="this.recentOrders.getBadgeType(
-                this.recentOrders.selectedOrder
-            )
-                ">
+                                    this.recentOrders.selectedOrder
+                                )"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-dot" viewBox="0 0 16 16">
                                     <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -157,7 +154,7 @@
                         </div>
                         <div class="items-center space-x-4 text-right">
                             <p class="mr-5 truncate text-base text-gray-800 dark:text-white">
-                                {{ this.invoiceData.currency }} {{ items.amount }}
+                                {{ items.amount }} {{ this.invoiceData.currency }}
                             </p>
                         </div>
                     </div>
@@ -178,7 +175,7 @@
 
                     <div class="items-center space-x-4 text-right">
                         <p class="mr-5 truncate text-base text-gray-800 dark:text-white">
-                            {{ this.invoiceData.currency }} {{ this.recentOrders.netTotal }}
+                            {{ this.recentOrders.netTotal }} {{ this.invoiceData.currency }}
                         </p>
                     </div>
                 </div>
@@ -192,7 +189,7 @@
 
                         <div class="items-center space-x-4 text-right">
                             <p class="mr-5 truncate text-base text-gray-800 dark:text-white">
-                                {{ this.invoiceData.currency }} {{ tax.rate }}
+                                {{ tax.rate }} {{ this.invoiceData.currency }}
                             </p>
                         </div>
                     </div>
@@ -206,7 +203,7 @@
 
                     <div class="items-center space-x-4 text-right">
                         <p class="mr-5 truncate text-base font-semibold text-gray-800 dark:text-white">
-                            {{ this.invoiceData.currency }} {{ this.recentOrders.grandTotal }}
+                            {{ this.recentOrders.grandTotal }} {{ this.invoiceData.currency }}
                         </p>
                     </div>
                 </div>
@@ -375,7 +372,7 @@
                         d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </div>
-            <div class="mt-8 grid grid-cols-2 gap-2">
+            <div class="mt-8 grid grid-cols-2 gap-2 mb-4">
                 <div
                     v-for="(modeOfPayment, index) in recentOrders.modeOfPaymentList"
                     :key="index"
@@ -383,9 +380,17 @@
                 >
                     <label
                         :for="'modeofPayments-' + index"
-                        class="block text-right text-lg dark:text-white mb-1"
+                        class="flex items-center justify-between text-lg dark:text-white mb-1"
                     >
                         {{ modeOfPayment.mode_of_payment }}
+                        <button
+                            type="button"
+                            class="mr-2 rounded-full bg-blue-500 text-white py-0 p-1 hover:bg-blue-700 focus:outline-none"
+                            @click="recentOrders.addModeOfPaymentToList(modeOfPayment)"
+                            title="إضافة طريقة الدفع"
+                        >
+                            +
+                        </button>
                     </label>
                     <input
                         :id="'modeofPayments-' + index"
@@ -395,13 +400,30 @@
                         required
                         v-model.number="modeOfPayment.value"
                         @click="recentOrders.calculatePaidAmount(modeOfPayment)"
-                        @input="recentOrders.changePaidAmount(modeOfPayment.mode_of_payment, $event.target.value)"
+                        @input="recentOrders.changePaidAmount(modeOfPayment.mode_of_payment, modeOfPayment.sequence, $event.target.value)"
                     />
                 </div>
             </div>
-            <div class="flex justify-start">
+            <div class="flex items-center justify-between border-t">
+                <div class="">
+                    <p class="mr-2 truncate text-xl font-semibold text-gray-900 dark:text-white">
+                        <span class="text-sm text-gray-500">إجمالي الدفع: </span>
+                        {{ this.recentOrders.total }}
+                        {{ this.invoiceData.currency }}
+                    </p>
+                    <p class="mr-2 truncate text-xl font-semibold text-gray-900 dark:text-white">
+                        <span class="text-sm text-gray-500">المطلوب: </span>
+                        {{ this.recentOrders.grandTotal }}
+                        {{ this.invoiceData.currency }}
+                    </p>
+                    <p class="mr-2 truncate text-xl font-semibold text-gray-900 dark:text-white">
+                        <span class="text-sm text-gray-500">الباقي: </span>
+                        {{ this.recentOrders.total - this.recentOrders.grandTotal }}
+                        {{ this.invoiceData.currency }}
+                    </p>
+                </div>
                 <button
-                    @click="this.recentOrders.showPayment = false; this.recentOrders.makePayment();"
+                    @click="this.recentOrders.makePayment();"
                     class="mt-10 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 cursor-pointer"
                 >
                     تأكيد الدفع
