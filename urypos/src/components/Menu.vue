@@ -146,12 +146,13 @@
                                                 this.recentOrders.editPrintedInvoice === 1 ||
                                                 this.auth.removeTableOrderItem === 0,
                                         }"
-                                        :disabled="this.recentOrders.restaurantTable" @click="
+                                        @click="
                                             (this.recentOrders.editPrintedInvoice === 0 ||
                                             this.auth.removeTableOrderItem === 1) &&
                                             this.menu.decrementItemQuantity(item)"
                                     >
                                         -
+                                        <!-- :disabled="this.recentOrders.restaurantTable" -->
                                     </button>
                                 </div>
                             </div>
@@ -177,8 +178,8 @@
                                             <input type="number" id="quantity"
                                                 class="mt-4 w-full appearance-none rounded border p-2 leading-tight text-gray-900 shadow focus:outline-none"
                                                 v-model="this.menu.quantity" v-bind:readonly="this.recentOrders.editPrintedInvoice === 1 && this.auth.removeTableOrderItem === 0"
-                                                :disabled="this.recentOrders.restaurantTable"
                                             />
+                                                <!-- :disabled="this.recentOrders.restaurantTable" -->
                                             <label for="comments" class="mt-6 block text-right text-gray-900 dark:text-white">
                                                 الملاحظات
                                             </label>
