@@ -114,7 +114,13 @@ export const useAuthStore = defineStore("auth", {
             this.db
                 .getDoc("User", this.sessionUser)
                 .then((doc) => {
-                    this.userRole = doc.roles.map((item) => item.role);
+                    this.call
+                        .get("ury.ury_pos.api.get_user_roles", this.sessionUser)
+                        .then((result) => {
+                            this.userRole = result.message;
+                        });
+                        
+                    // this.userRole = doc.roles.map((item) => item.role);
                     const getPosProfile = {
                         doctype: "POS Profile",
                         name: this.invoiceData.posProfile,
