@@ -7,6 +7,7 @@ import { useNotifications } from "./Notification.js";
 import { usetoggleRecentOrder } from "./recentOrder.js";
 import { useAlert } from "./Alert.js";
 import { useAuthStore } from "./Auth.js";
+import { useRestaurantSystemSettings } from "./RestaurantSystemSettings.js";
 import frappe from "./frappeSdk.js";
 
 import {
@@ -50,6 +51,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         call: frappe.call(),
         alert: useAlert(),
         auth: useAuthStore(),
+        restaurant_settings: useRestaurantSystemSettings(),
         menu: useMenuStore(),
         table: useTableStore(),
         customers: useCustomerStore(),
@@ -124,133 +126,138 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
 
         // Method for creating an invoice
         async invoiceCreation() {
-            this.showUpdateButtton = false;
-            this.invoiceUpdating = true;
-            let selectedTables = "";
-            let cart = this.menu.cart;
-            const customerName = this.customers.search;
-            const ordeType =
-                this.menu.selectedOrderType || this.recentOrders.pastOrderType;
-            const numberOfPax = this.customers.numberOfPax;
-            let invoice =
-                this.recentOrders.draftInvoice ||
-                this.table.invoiceNo ||
-                this.invoiceNumber ||
-                null;
-            let lastInvoice =
-                this.invoiceNumber ||
-                this.recentOrders.draftInvoice ||
-                this.table.invoiceNo ||
-                null;
+            try {
+                this.showUpdateButtton = false;
+                this.invoiceUpdating = true;
+                let selectedTables = "";
+                let cart = this.menu.cart;
+                const customerName = this.customers.search;
+                const ordeType =
+                    this.menu.selectedOrderType || this.recentOrders.pastOrderType;
+                const numberOfPax = this.customers.numberOfPax;
+                let invoice =
+                    this.recentOrders.draftInvoice ||
+                    this.table.invoiceNo ||
+                    this.invoiceNumber ||
+                    null;
+                let lastInvoice =
+                    this.invoiceNumber ||
+                    this.recentOrders.draftInvoice ||
+                    this.table.invoiceNo ||
+                    null;
 
-            selectedTables =
-                this.table.selectedTable || this.recentOrders.restaurantTable;
-            const cartCopy = JSON.parse(JSON.stringify(cart));
-            let waiter =
-                this.table.previousWaiter !== null &&
-                    this.table.previousWaiter !== undefined
-                    ? this.table.previousWaiter
-                    : this.recentOrders.recentWaiter !== null &&
-                        this.recentOrders.recentWaiter !== undefined
-                        ? this.recentOrders.recentWaiter
-                        : this.waiter;
+                selectedTables =
+                    this.table.selectedTable || this.recentOrders.restaurantTable;
+                const cartCopy = JSON.parse(JSON.stringify(cart));
+                let waiter =
+                    this.table.previousWaiter !== null &&
+                        this.table.previousWaiter !== undefined
+                        ? this.table.previousWaiter
+                        : this.recentOrders.recentWaiter !== null &&
+                            this.recentOrders.recentWaiter !== undefined
+                            ? this.recentOrders.recentWaiter
+                            : this.waiter;
 
-            const creatingInvoice = {
-                table: selectedTables,
-                customer: customerName,
-                items: cart,
-                no_of_pax: numberOfPax,
-                mode_of_payment: this.defaultModeOfPayment,
-                cashier: this.cashier,
-                waiter: waiter,
-                last_modified_time: this.table.modifiedTime,
-                pos_profile: this.posProfile,
-                invoice: invoice,
-                aggregator_id: this.menu.aggregatorId,
-                order_type: ordeType,
-                last_invoice: lastInvoice,
-                comments: this.menu.comments,
-                room: this.table.selectedRoom,
-            };
-            // if (!this.auth.cashier && !numberOfPax) {
-            if (!numberOfPax && ordeType == 'Dine In') {
-                this.alert.createAlert(
-                    "رسالة",
-                    "الرجاء تحديد عدد الأشخاص",
-                    "موافق"
-                );
-                this.showUpdateButtton = true;
-                this.invoiceUpdating = false;
-            // } else if (!this.auth.cashier && !selectedTables) {
-            } else if (!selectedTables && ordeType == 'Dine In') {
-                this.alert.createAlert(
-                    "رسالة",
-                    "الرجاء تحديد طاولة",
-                    "موافق"
-                );
-                this.showUpdateButtton = true;
-                this.invoiceUpdating = false;
-            } else if (this.auth.cashier && !ordeType && !selectedTables) {
-                this.alert.createAlert("رسالة", "الرجاء تحديد نوع الطلب", "موافق");
-                this.showUpdateButtton = true;
-                this.invoiceUpdating = false;
-            } else {
-                this.call
-                    .post(
-                        "ury.ury.doctype.ury_order.ury_order.sync_order",
-                        creatingInvoice
-                    )
-                    .then((response) => {
-                        this.showUpdateButtton = true;
-                        if (response.message.status === "Failure") {
-                            const alert = response._server_messages;
-                            const messages = JSON.parse(alert);
-                            const message = JSON.parse(messages[0]);
+                const creatingInvoice = {
+                    table: selectedTables,
+                    customer: customerName,
+                    items: cart,
+                    no_of_pax: numberOfPax,
+                    mode_of_payment: this.defaultModeOfPayment,
+                    cashier: this.cashier,
+                    waiter: waiter,
+                    last_modified_time: this.table.modifiedTime,
+                    pos_profile: this.posProfile,
+                    invoice: invoice,
+                    aggregator_id: this.menu.aggregatorId,
+                    order_type: ordeType,
+                    last_invoice: lastInvoice,
+                    comments: this.menu.comments,
+                    room: this.table.selectedRoom,
+                };
+                // if (!this.auth.cashier && !numberOfPax) {
+                if (!numberOfPax && ordeType == 'Dine In') {
+                    this.alert.createAlert(
+                        "رسالة",
+                        "الرجاء تحديد عدد الأشخاص",
+                        "موافق"
+                    );
+                    this.showUpdateButtton = true;
+                    this.invoiceUpdating = false;
+                // } else if (!this.auth.cashier && !selectedTables) {
+                } else if (!selectedTables && ordeType == 'Dine In') {
+                    this.alert.createAlert(
+                        "رسالة",
+                        "الرجاء تحديد طاولة",
+                        "موافق"
+                    );
+                    this.showUpdateButtton = true;
+                    this.invoiceUpdating = false;
+                } else if (this.auth.cashier && !ordeType && !selectedTables) {
+                    this.alert.createAlert("رسالة", "الرجاء تحديد نوع الطلب", "موافق");
+                    this.showUpdateButtton = true;
+                    this.invoiceUpdating = false;
+                } else {
+                    this.call
+                        .post(
+                            "ury.ury.doctype.ury_order.ury_order.sync_order",
+                            creatingInvoice
+                        )
+                        .then((response) => {
+                            this.showUpdateButtton = true;
+                            if (response.message.status === "Failure") {
+                                const alert = response._server_messages;
+                                const messages = JSON.parse(alert);
+                                const message = JSON.parse(messages[0]);
 
-                            this.alert
-                                .createAlert("رسالة", message.message, "موافق")
-                                .then(() => {
-                                    router.push("/Table").then(() => {
-                                        window.location.reload();
+                                this.alert
+                                    .createAlert("رسالة", message.message, "موافق")
+                                    .then(() => {
+                                        router.push("/Table").then(() => {
+                                            window.location.reload();
+                                        });
                                     });
+                            } else {
+                                this.invoiceNumber = response.message.name;
+                                this.grandTotal = response.message.grand_total;
+                                this.total_qty = response.message.items.reduce((sum, item) => sum + item.qty, 0);
+                                this.notification.createNotification("تم تحديث الطلب");
+                                this.table.handleRoomChange();
+                                this.menu.comments = "";
+                                let items = this.menu.items;
+                                items.forEach((item) => {
+                                    item.comment = "";
                                 });
-                        } else {
-                            this.invoiceNumber = response.message.name;
-                            this.grandTotal = response.message.grand_total;
-                            this.total_qty = response.message.items.reduce((sum, item) => sum + item.qty, 0);
-                            this.notification.createNotification("تم تحديث الطلب");
-                            this.table.handleRoomChange();
-                            this.menu.comments = "";
-                            let items = this.menu.items;
-                            items.forEach((item) => {
-                                item.comment = "";
-                            });
-                            this.previousOrderItem.splice(0, this.previousOrderItem.length);
-                            this.previousOrderItem.splice(
-                                0,
-                                this.previousOrderItem.length,
-                                ...cartCopy
-                            );
-                            this.invoiceUpdating = false;
-                            this.table.modifiedTime = response.message.modified;
-                            if (this.auth.cashier) {
-                                router.push("/recentOrder").then(() => {
-                                    this.recentOrders.viewRecentOrder(response.message);
-                                    this.clearDataAfterUpdate();
-                                    this.menu.pickOrderType();
-                                });
+                                this.previousOrderItem.splice(0, this.previousOrderItem.length);
+                                this.previousOrderItem.splice(
+                                    0,
+                                    this.previousOrderItem.length,
+                                    ...cartCopy
+                                );
+                                this.invoiceUpdating = false;
+                                this.table.modifiedTime = response.message.modified;
+                                if (this.auth.cashier) {
+                                    router.push("/recentOrder").then(() => {
+                                        this.recentOrders.viewRecentOrder(response.message);
+                                        this.clearDataAfterUpdate();
+                                        this.menu.pickOrderType();
+                                    });
+                                }
                             }
-                        }
-                    })
-                    .catch((error) => {
-                        this.showUpdateButtton = true;
-                        this.invoiceUpdating = false;
-                        if (error._server_messages) {
-                            const messages = JSON.parse(error._server_messages);
-                            const message = JSON.parse(messages[0]);
-                            this.alert.createAlert("رسالة", message.message, "موافق");
-                        }
-                    });
+                        })
+                        .catch((error) => {
+                            this.showUpdateButtton = true;
+                            this.invoiceUpdating = false;
+                            if (error._server_messages) {
+                                const messages = JSON.parse(error._server_messages);
+                                const message = JSON.parse(messages[0]);
+                                this.alert.createAlert("رسالة", message.message, "موافق");
+                            }
+                        });
+                }
+            } catch(error) {
+                this.alert.createAlert("خطأ", "حدث خطأ في الفاتورة!", "موافق");
+                console.log("Error in creating invoice, error is: ", error);
             }
         },
 
@@ -455,6 +462,14 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         .post("ury.ury.api.ury_print.print_pos_page", sendObj)
                         .then((result) => {
                             this.notification.createNotification("تمت الطباعة بنجاح");
+                            if(this.restaurant_settings.restaurant_system_settings.show_a_print_preview) {
+                                try {
+                                    this.openPrintFormatPDF(invoiceNo);
+                                }
+                                catch {
+                                    console.error("Error in print the invoice in pdf.");
+                                }
+                            }
                             // window.location.reload();
                             if(isFromRecentOrders) {
                                 this.recentOrders.invoicePrinted = 1;
@@ -495,6 +510,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     return this.alert.createAlert("خطأ", e?.title, "موافق");
                 }
             }
+        },
+
+        openPrintFormatPDF: async function (invoiceNo) {
+            const print_url = `/api/method/frappe.utils.print_format.download_pdf?doctype=POS Invoice&name=${invoiceNo}&format=POS LOFT Invoice&no_letterhead=0&letterhead=Trilogy Basic&_lang=ar`;
+        
+            window.open(print_url, '_blank');
         },
 
         loadPrinter: async function (qz_host) {
