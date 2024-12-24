@@ -12,7 +12,7 @@ import {
 export function loadQzPrinter(host) {
     return new Promise((resolve, reject) => {
         qz.security.setCertificatePromise((resolve) => {
-            axios.get("/assets/ury/files/cert.pem")
+            axios.get("/assets/ury_pos/urypos/pos_qz_tray_cert.pem")
                 .then((response) => {
                     resolve(response.data)
                 }).catch((err) => {
@@ -45,7 +45,7 @@ export function disconnectQzPrinter() {
         qz.websocket.disconnect();
 }
 
-export function printWithQz(host, htmlToPrint) {
+export function printWithQz(host, cashier_printer_name, htmlToPrint) {
 
     return new Promise((resolve, reject) => {
         qz.security.setSignatureAlgorithm("SHA512"); // Since 2.1
@@ -64,37 +64,62 @@ export function printWithQz(host, htmlToPrint) {
             };
         });
 
-        const printing = () => {
-            qz.printers.getDefault()
-                .then(async (printer) => {
-                    const data = [{
-                        type: "html",
-                        format: "plain",
-                        data: htmlToPrint
-                    }];
-                    const config = qz.configs.create(printer)
-                    try {
-                        await qz.print(config, data);
-                        return resolve("printed");
-                    } catch (e) {
-                        qz.websocket.disconnect();
-                        reject(
-                            {
-                                custom: true,
-                                title: "Print failed",
-                                message: String(e)
-                            }
-                        );
-                    }
-                })
-                .catch((err) => {
+        const printing = async () => {
+            if(cashier_printer_name) {
+                const data = [{
+                    type: "html",
+                    format: "plain",
+                    data: htmlToPrint
+                }];
+                const config = qz.configs.create(cashier_printer_name)
+                try {
+                    await qz.print(config, data);
+                    return resolve("printed");
+                } catch (e) {
                     qz.websocket.disconnect();
-                    reject({
-                        custom: true,
-                        title: "Error looking up for printer",
-                        message: String(err)
+                    reject(
+                        {
+                            custom: true,
+                            title: "فشل في الاتصال بالطابعة: " + cashier_printer_name,
+                            message: String(e)
+                        }
+                    );
+                }
+            }
+            else {
+                console.log("Attention: Cashier Printer Name is not passed, so used the default printer.");
+
+                qz.printers.getDefault()
+                    .then(async (printer) => {
+                        const data = [{
+                            type: "html",
+                            format: "plain",
+                            data: htmlToPrint
+                        }];
+                        const config = qz.configs.create(printer)
+                        try {
+                            await qz.print(config, data);
+                            return resolve("printed");
+                        } catch (e) {
+                            qz.websocket.disconnect();
+                            reject(
+                                {
+                                    custom: true,
+                                    title: "فشلت الطباعة",
+                                    message: String(e)
+                                }
+                            );
+                        }
                     })
-                })
+                    .catch((err) => {
+                        qz.websocket.disconnect();
+                        reject({
+                            custom: true,
+                            title: "Error looking up for printer",
+                            message: String(err)
+                        })
+                    })
+            }
         }
 
         if (qz.websocket.isActive()) {

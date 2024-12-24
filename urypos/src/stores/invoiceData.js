@@ -26,6 +26,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         branch: null,
         printer: null,
         qz_host: null,
+        cashier_printer_name: null,
         company: null,
         currency: null,
         qz_print: null,
@@ -73,6 +74,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.print_format = this.invoiceDetails.print_format;
                     this.qz_print = this.invoiceDetails.qz_print;
                     this.qz_host = this.invoiceDetails.qz_host;
+                    this.cashier_printer_name = this.invoiceDetails.cashier_printer_name;
                     this.print_type = this.invoiceDetails.print_type;
                     this.printer = this.invoiceDetails.printer;
                     this.paidLimit = this.invoiceDetails.paid_limit;
@@ -338,9 +340,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 if (this.print_type === "qz") {
                     const printHTML = {
                         doc: "POS Invoice",
-                        name: invoiceNo,
+                        name: tableInvoiceName ? tableInvoiceName : invoiceNo,
                         print_format: this.print_format,
-                        _lang: "en",
+                        _lang: "ar",
                     };
                     const result = await this.call.get(
                         "frappe.www.printview.get_html_and_style",
@@ -355,21 +357,22 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         );
                     }
 
-                    const print = await printWithQz(this.qz_host, result?.message?.html);
-
-                    if (print === "printed") {
-                        this.notification.createNotification("تمت الطباعة بنجاح");
-                        const updatePrintTable = {
-                            invoice: invoiceNo,
-                        };
-                        this.call
-                            .post("ury.ury.api.ury_print.qz_print_update", updatePrintTable)
-                            .then(() => {
-                                window.location.reload();
-                                return 200;
-                            })
-                            .catch((error) => console.error(error, "printed"));
-                    }
+                    // if(this.cashier_printer_name) {
+                        const print = await printWithQz(this.qz_host, this.cashier_printer_name, result?.message?.html);
+                        if (print === "printed") {
+                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            const updatePrintTable = {
+                                invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
+                            };
+                            this.call
+                                .post("ury.ury.api.ury_print.qz_print_update", updatePrintTable)
+                                .then(() => {
+                                    window.location.reload();
+                                    return 200;
+                                })
+                                .catch((error) => console.error(error, "printed"));
+                        }
+                    // }
                 } else if (this.print_type === "network") {
                     if (this.auth.cashier) {
                         const sendObj = {
@@ -464,7 +467,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                             this.notification.createNotification("تمت الطباعة بنجاح");
                             if(this.restaurant_settings.restaurant_system_settings.show_a_print_preview) {
                                 try {
-                                    this.openPrintFormatPDF(invoiceNo);
+                                    this.openPrintFormatPDF(tableInvoiceName ? tableInvoiceName : invoiceNo);
                                 }
                                 catch {
                                     console.error("Error in print the invoice in pdf.");
