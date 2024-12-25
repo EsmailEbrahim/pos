@@ -516,8 +516,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         },
 
         openPrintFormatPDF: async function (invoiceNo) {
-            const print_url = `/api/method/frappe.utils.print_format.download_pdf?doctype=POS Invoice&name=${invoiceNo}&format=POS LOFT Invoice&no_letterhead=0&letterhead=Trilogy Basic&_lang=ar`;
-        
+            // const print_url = `/api/method/frappe.utils.print_format.download_pdf?doctype=POS Invoice&name=${invoiceNo}&format=POS LOFT Invoice&no_letterhead=0&letterhead=Trilogy Basic&_lang=ar`;
+            const print_url = `/printview?doctype=POS%20Invoice&name=${invoiceNo}&format=${this.print_format}&no_letterhead=1&settings=%7B%7D&_lang=ar`;
+
             window.open(print_url, '_blank');
         },
 
