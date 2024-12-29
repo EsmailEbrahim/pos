@@ -9,6 +9,7 @@ import { useAlert } from "./Alert.js";
 import { useAuthStore } from "./Auth.js";
 import { useRestaurantSystemSettings } from "./RestaurantSystemSettings.js";
 import frappe from "./frappeSdk.js";
+import { WebSocketPrinter } from './websocket-printer.js';
 
 import {
     printWithQz,
@@ -27,9 +28,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         printer: null,
         qz_host: null,
         cashier_printer_name: null,
+        cashier_silent_print_format: null,
+        cashier_silent_print_type: null,
         company: null,
         currency: null,
         qz_print: null,
+        silent_print: null,
         paidLimit: null,
         print_type: null,
         grandTotal: null,
@@ -73,8 +77,11 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.company = this.invoiceDetails.company;
                     this.print_format = this.invoiceDetails.print_format;
                     this.qz_print = this.invoiceDetails.qz_print;
+                    this.silent_print = this.invoiceDetails.silent_print;
                     this.qz_host = this.invoiceDetails.qz_host;
                     this.cashier_printer_name = this.invoiceDetails.cashier_printer_name;
+                    this.cashier_silent_print_format = this.invoiceDetails.cashier_silent_print_format;
+                    this.cashier_silent_print_type = this.invoiceDetails.cashier_silent_print_type;
                     this.print_type = this.invoiceDetails.print_type;
                     this.printer = this.invoiceDetails.printer;
                     this.paidLimit = this.invoiceDetails.paid_limit;
@@ -455,6 +462,43 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                             custom: (this.isPrinting = false),
                         };
                     }
+                } else if (this.print_type === "silent") {
+                    try {
+                        const URY_KOTs = await this.call.get('ury.ury_pos.api.get_ury_kot_by_invoice_number', {
+                            invoice_number: invoiceNo
+                        });
+
+                        const printStatus = await this.printSilently("POS Invoice", invoiceNo, this.cashier_silent_print_format, this.cashier_silent_print_type);
+
+                        const URY_KOTs_array = URY_KOTs.message;
+
+                        const printPromises = URY_KOTs_array.map(async (kot) => {
+                            return await this.printSilently("URY KOT", kot.name, kot.production_silent_print_format, kot.production_silent_print_type);
+                        });
+
+                        const printResults = await Promise.all(printPromises);
+
+                        const allPrinted = printResults.every(result => result === "printed");
+
+                        if (printStatus === "printed" && allPrinted) {
+                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            const updatePrintTable = {
+                                invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
+                            };
+                            this.call
+                                .post("ury.ury.api.ury_print.qz_print_update", updatePrintTable)
+                                .then(() => {
+                                    window.location.reload();
+                                    return 200;
+                                })
+                                .catch((error) => console.error(error, "printed"));
+                        } else {
+                            console.error("Printing failed:", printStatus);
+                            this.notification.createNotification("حدث خطأ أثناء الطباعة");
+                        }
+                    } catch (error) {
+                        console.error("Error in printing process:", error);
+                    }
                 } else {
                     const sendObj = {
                         doctype: "POS Invoice",
@@ -512,6 +556,31 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
 
                     return this.alert.createAlert("خطأ", e?.title, "موافق");
                 }
+            }
+        },
+    
+        async printSilently(docType, docName, printFormat, printType) {
+            try {        
+                const response = await this.call.get('silent_print.utils.print_format.create_pdf', {
+                    doctype: docType,
+                    name: docName,
+                    silent_print_format: printFormat,
+                    no_letterhead: 1,
+                    _lang: "ar"
+                });
+        
+                const printService = new WebSocketPrinter();
+                printService.submit({
+                    type: printType,
+                    url: 'file.pdf',
+                    file_content: response.message.pdf_base64,
+                });
+
+                return "printed";
+            } catch (error) {
+                console.error('Silent Print Error:', error);
+
+                return "error";
             }
         },
 
