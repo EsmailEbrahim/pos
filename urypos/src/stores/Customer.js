@@ -64,7 +64,10 @@ export const useCustomerStore = defineStore("customers", {
         },
         pickCustomerGroup() {
             this.db
-                .getDocList("Customer Group")
+                .getDocList("Customer Group", {
+                    fields: ["name", "custom_show_in_ury_pos"],
+                    filters: [['custom_show_in_ury_pos', '=', true]]
+                })
                 .then((docs) => {
                     this.customerGroupList = docs;
                 })
