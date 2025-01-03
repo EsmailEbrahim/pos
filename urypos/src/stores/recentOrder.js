@@ -35,6 +35,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     selectedStatus: "Unbilled",
     posProfile: "",
     searchOrder: "",
+    searchTable: "",
     customerNameForBilling: "",
     previousOrderdCustomer: "",
     table: null,
@@ -134,11 +135,31 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       this.getPosInvoice(this.selectedStatus, limit, startLimit);
     },
     matchesSearchOrder(order) {
-      const query = this.searchOrder.toLowerCase();
-      const name = order.name.toLowerCase();
-      const customer = order.customer.toLowerCase();
+      if(this.searchOrder) {
+        const query = this.searchOrder.toLowerCase();
+  
+        const name = order.name.toLowerCase();
+        const customer = order.customer.toLowerCase();
+  
+        return name.includes(query) || customer.includes(query);
+      }
 
-      return name.includes(query) || customer.includes(query);
+      else if(this.searchTable) {
+        const query = this.searchTable.toLowerCase();
+        
+        if(order.restaurant_table) {
+          const restaurant_table = order.restaurant_table.toLowerCase();
+  
+          return restaurant_table.includes(query);
+        }
+        else {
+          return false;
+        }
+      }
+
+      else {
+        return true;
+      }
     },
     getBadgeType(selectedOrder) {
       if (

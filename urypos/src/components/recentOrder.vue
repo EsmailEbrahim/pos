@@ -17,9 +17,18 @@
                 </h5>
             </div>
             <div class="w-full" @click="this.recentOrders.showOrder = false">
-                <input type="search" id="orderSeach"
-                    class="block w-full rounded-lg border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    placeholder="البحث عن طريق رقم الفاتورة أو اسم العميل" v-model="this.recentOrders.searchOrder" />
+                <div class="flex">
+                    <input type="search" id="orderSeach"
+                        class="block ml-1 w-2/3 rounded-lg border-gray-300 bg-gray-50 p-2.5 pl-5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        placeholder="البحث برقم الفاتورة أو اسم العميل" v-model="this.recentOrders.searchOrder"
+                        @click="this.recentOrders.searchTable = ''"
+                    />
+                    <input type="search" id="tableSeach"
+                        class="block w-1/3 rounded-lg border-gray-300 bg-gray-50 p-2.5 pl-5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        placeholder="البحث برقم الطاولة" v-model="this.recentOrders.searchTable"
+                        @click="this.recentOrders.searchOrder = ''"
+                    />
+                </div>
                 <select id="status"
                     class="mt-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange" @click="this.recentOrders.showPayment = false;">
