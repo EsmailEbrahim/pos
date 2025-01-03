@@ -25,9 +25,9 @@ export const tabFunctions = defineStore("tabClick", {
             if (!this.table.selectedTable) {
                 this.alert
                     .createAlert(
-                        "No Active Table",
-                        "You have not selected an active table",
-                        "Ok"
+                        "لا توجد طاولة مُختارة",
+                        "الرجاء اختيار طاولة",
+                        "موافق"
                     )
                     .then(() => {
                         router.push("/Table");
@@ -35,12 +35,14 @@ export const tabFunctions = defineStore("tabClick", {
             }
         },
         clickMenuTab() {
-            if (!this.auth.cashier && !this.table.selectedTable) {
+            // if (!this.auth.cashier && !this.table.selectedTable) {
+            // if (!this.table.selectedTable && (this.menu.selectedOrderType == 'Dine In' || this.menu.selectedOrderType == 'Take Away')) {
+            if (!this.table.selectedTable) {
                 this.alert
                     .createAlert(
-                        "No Active Table",
-                        "You have not selected an active table",
-                        "Ok"
+                        "لا توجد طاولة مُختارة",
+                        "الرجاء اختيار طاولة",
+                        "موافق"
                     )
                     .then(() => {
                         router.push("/Table");
@@ -49,9 +51,9 @@ export const tabFunctions = defineStore("tabClick", {
             if (this.auth.cashier && !this.menu.selectedOrderType) {
                 this.alert
                     .createAlert(
-                        "No Order Type",
-                        "Please select an Order Type",
-                        "Ok"
+                        "لا يوجد نوع طلب",
+                        "الرجاء اختيار نوع الطلب",
+                        "موافق"
                     )
                     .then(() => {
                         router.push("/Table");
@@ -63,7 +65,7 @@ export const tabFunctions = defineStore("tabClick", {
                 !this.menu.selectedAggregator
             ) {
                 this.alert
-                    .createAlert("No Aggregator", "Please select an Aggregator", "Ok")
+                    .createAlert("لا تطبيقات وسيطة مُختارة", "الرجاء اختيار تطبيق وسيط", "موافق")
                     .then(() => {
                         router.push("/Table");
                     });

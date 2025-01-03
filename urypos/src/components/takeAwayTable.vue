@@ -132,7 +132,7 @@
     </div>
     <div v-if="this.table.takeAway.length === 0" class="inset-0 mt-72 flex items-center justify-center">
         <div class="text-center">
-            Tables not found. Please set takeaway tables for the room
+             لم يتم العثور على طاولات للسفري. يرجى تحديد طاولة سفري للغرفة  
             <span class="font-medium">{{ this.table.selectedRoom }}.</span>
         </div>
     </div>
