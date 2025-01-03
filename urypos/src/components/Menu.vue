@@ -281,7 +281,7 @@
                                 <a
                                     href="#"
                                     class="mt-1 lg:mt-0 inline-flex items-center text-blue-600 hover:underline"
-                                    @click.prevent="this.customers.newCustomerData(this.customers.search); this.customers.pickCustomerGroup(); this.customers.pickCustomerTerritory();"
+                                    @click.prevent="this.customers.newCustomerData(this.customers.search);"
                                 >
                                     <svg
                                         fill="none"
@@ -371,7 +371,6 @@
                                     class="mt-2 w-full p-2 border rounded-lg text-gray-900 focus:ring focus:ring-blue-300"
                                     v-model="this.customers.customerGroup"
                                     @click="
-                                        this.customers.pickCustomerGroup();
                                         this.customers.showCustomersGroup = true;
                                     "
                                 />
@@ -401,7 +400,6 @@
                                     class="mt-2 w-full p-2 border rounded-lg text-gray-900 focus:ring focus:ring-blue-300"
                                     v-model="this.customers.customerTerritory"
                                     @click="
-                                        this.customers.pickCustomerTerritory();
                                         this.customers.showCustomersTerritory = true;
                                     "
                                 />
@@ -686,6 +684,8 @@
             if (!this.customers.search) {
                 this.customers.search = this.table.default_customer;
             }
+            this.customers.pickCustomerGroup();
+            this.customers.pickCustomerTerritory();
         },
     };
 </script>
