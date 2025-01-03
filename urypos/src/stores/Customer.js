@@ -96,7 +96,7 @@ export const useCustomerStore = defineStore("customers", {
             } else if (typeof name === "string") {
                 this.newCustomer = name;
             } else {
-                this.alert.createAlert("Message", "Invalid Customer", "OK");
+                this.alert.createAlert("رسالة", "Invalid Customer", "موافق");
             }
         },
 
@@ -104,20 +104,20 @@ export const useCustomerStore = defineStore("customers", {
             if (!this.newCustomer || !this.newCustomerMobileNo) {
                 let missingFields = [];
                 if (!this.newCustomer) {
-                    missingFields.push("Customer Name");
+                    missingFields.push("اسم الزبون");
                 }
                 if (!this.newCustomerMobileNo) {
-                    missingFields.push("Mobile Number");
+                    missingFields.push("رقم الهاتف");
                 }
                 if (!this.customerGroup) {
-                    missingFields.push("Customer Group");
+                    missingFields.push("فئة الزبون");
                 }
                 if (!this.customerTerritory) {
-                    missingFields.push("Territory");
+                    missingFields.push("الإقليم");
                 }
                 const missingFieldsMessage =
-                    "Following fields have missing values: " + missingFields.join(", ");
-                this.alert.createAlert("Message", missingFieldsMessage, "OK");
+                    "الحقول التالية تحتوي على قيم مفقودة: " + missingFields.join(", ");
+                this.alert.createAlert("رسالة", missingFieldsMessage, "موافق");
             } else {
                 this.showAddNewCustomer = false;
                 const db = frappe.db();
@@ -129,14 +129,14 @@ export const useCustomerStore = defineStore("customers", {
                 })
                     .then((doc) => {
                         this.search = doc.name;
-                        this.notification.createNotification("New Customer Created");
+                        this.notification.createNotification("تم إضافة زبون جديد");
                         this.showModalNewCustomer = false;
                     })
                     .catch((error) => {
                         const serverMessages = JSON.parse(error._server_messages);
                         const messageObject = JSON.parse(serverMessages[0]);
                         const message = messageObject.message;
-                        this.alert.createAlert("Message", message, "OK");
+                        this.alert.createAlert("رسالة", message, "موافق");
                     });
             }
         },

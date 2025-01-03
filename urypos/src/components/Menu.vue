@@ -399,9 +399,7 @@
                                     id="territory"
                                     class="mt-2 w-full p-2 border rounded-lg text-gray-900 focus:ring focus:ring-blue-300"
                                     v-model="this.customers.customerTerritory"
-                                    @click="
-                                        this.customers.showCustomersTerritory = true;
-                                    "
+                                    @click="this.customers.showCustomersTerritory = true;"
                                 />
                                 <div
                                     v-if="this.customers.showCustomersTerritory"
