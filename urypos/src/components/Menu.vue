@@ -505,9 +505,9 @@
                                 <button
                                     class="p-2 text-center"
                                     type="button"
-                                    :disabled="this.recentOrders.restaurantTable"
                                     @click="(this.recentOrders.editPrintedInvoice === 0 || this.auth.removeTableOrderItem === 1) && this.menu.removeItemFromCart(index)"
                                 >
+                                    <!-- :disabled="this.recentOrders.restaurantTable" -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                         :style="{ fill: this.menu.setColorForBilledInvoice }" class="bi bi-trash" viewBox="0 0 16 16">
                                         <path
