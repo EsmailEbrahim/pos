@@ -38,7 +38,17 @@
                     </h3>
                 </div>
 
-                <div>
+                <div class="flex">
+                    <button
+                        style="user-select: none;"
+                        class="ml-2 hover:bg-slate-300 text-blue font-semibold px-6 py-1 rounded-md"
+                        @click="reloadPage()"
+                        title="تحديث"
+                    >
+                        <svg class="w-6 h-6 text-blue-800 dark:text-blue" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
+                        </svg>          
+                    </button>
                     <button
                         type="button"
                         class="flex rounded-full bg-gray-100 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-400 md:mr-0"
@@ -314,5 +324,14 @@ export default {
         system_settings: this.settings,
     };
   },
+  methods: {
+    reloadPage() {
+    if (typeof window !== "undefined") {
+        window.location.reload();
+    } else {
+        console.error("Window object is not available.");
+    }
+    }
+  }
 };
 </script>

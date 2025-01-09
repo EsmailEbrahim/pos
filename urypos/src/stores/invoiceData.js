@@ -278,10 +278,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             this.recentOrders.restaurantTable = "";
             this.table.selectedTable = "";
             this.customers.numberOfPax = "";
+            this.menu.comments = "";
             this.menu.cart = [];
             this.recentOrders.draftInvoice = "";
             this.menu.selectedAggregator = "";
             this.invoiceNumber = "";
+            this.table.invoiceNo = "";
             this.tableInvoiceNo = "";
             this.customers.customerFavouriteItems = "";
             this.customers.search = "";
@@ -304,9 +306,10 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             this.recentOrders.selectedTable = "";
             this.customers.selectedOrderType = "";
             this.menu.selectedOrderType = "";
-            this.recentOrders.selectedStatus = "Unbilled";
+            this.recentOrders.selectedStatus = "Unconfirmed";
             this.recentOrders.handleStatusChange();
         },
+        
         billing(table) {
             let tables = table.name;
             const getOrderInvoice = {
@@ -337,6 +340,75 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 })
                 .catch((error) => console.error(error));
         },
+
+        confirm_order: async function (invoice_name = null) {
+            this.isPrinting = true;
+        
+            const invoiceNo = 
+                invoice_name || 
+                this.recentOrders.invoiceNumber || 
+                this.tableInvoiceNo || 
+                this.invoiceNumber;
+        
+            try {
+                const args = { invoice_name: invoiceNo };
+                const result = await this.call.post(
+                    "ury.ury.doctype.ury_order.ury_order.confirm_order",
+                    args
+                );
+        
+                if (result.message.status === "success") {
+                    const KOTsPrinted = await this.printKOTs(invoiceNo);
+        
+                    if (KOTsPrinted === "printed") {
+                        window.location.reload();
+                        return 200;
+                    } else {
+                        console.error("Error in printing KOTs!");
+                        this.alert.createAlert("خطأ", "خطأ في طباعة KOTs!", "موافق");
+                    }
+                } else if (result?.message?.status === "error") {
+                    console.error("Error to confirm order: ", result?.message?.error);
+                    this.alert.createAlert("خطأ", "خطأ عند تأكيد الطلب!", "موافق");
+                }
+            } catch (e) {
+                console.error("Error to confirm order: ", e);
+                if (e?.custom) {
+                    this.alert.createAlert("خطأ", e?.title, "موافق");
+                }
+            } finally {
+                this.isPrinting = false;
+            }
+        },
+
+        printKOTs: async function (invoiceNo) {
+            try {
+                if (this.print_type === "silent") {
+                    const args = {
+                        invoice_number: invoiceNo,
+                        // type: 'New Order',
+                    };
+                    const URY_KOTs = await this.call.get('ury.ury_pos.api.get_ury_kot_by_invoice_number', args);
+        
+                    const printPromises = URY_KOTs.message.map((kot) =>
+                        this.printSilently("URY KOT", kot.name, kot.production_silent_print_format, kot.production_silent_print_type)
+                    );
+        
+                    const printResults = await Promise.all(printPromises);
+        
+                    if (printResults.every(result => result === "printed")) {
+                        return "printed";
+                    } else {
+                        console.error(`Printing failed for invoice: ${invoiceNo}`);
+                        return "error";
+                    }
+                }
+            } catch (error) {
+                console.error(`Error in printing process for invoice: ${invoiceNo}`, error);
+                return "error";
+            }
+        },
+
         printFunction: async function (isFromRecentOrders = false, tableInvoiceName = '') {
             this.isPrinting = true;
             let invoiceNo =
@@ -464,23 +536,24 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     }
                 } else if (this.print_type === "silent") {
                     try {
-                        const URY_KOTs = await this.call.get('ury.ury_pos.api.get_ury_kot_by_invoice_number', {
-                            invoice_number: invoiceNo
-                        });
-
+                        // const URY_KOTs = await this.call.get('ury.ury_pos.api.get_ury_kot_by_invoice_number', {
+                        //     invoice_number: invoiceNo
+                        // });
+                        
                         const printStatus = await this.printSilently("POS Invoice", invoiceNo, this.cashier_silent_print_format, this.cashier_silent_print_type);
 
-                        const URY_KOTs_array = URY_KOTs.message;
+                        // const URY_KOTs_array = URY_KOTs.message;
 
-                        const printPromises = URY_KOTs_array.map(async (kot) => {
-                            return await this.printSilently("URY KOT", kot.name, kot.production_silent_print_format, kot.production_silent_print_type);
-                        });
+                        // const printPromises = URY_KOTs_array.map(async (kot) => {
+                        //     return await this.printSilently("URY KOT", kot.name, kot.production_silent_print_format, kot.production_silent_print_type);
+                        // });
 
-                        const printResults = await Promise.all(printPromises);
+                        // const printResults = await Promise.all(printPromises);
 
-                        const allPrinted = printResults.every(result => result === "printed");
+                        // const allPrinted = printResults.every(result => result === "printed");
 
-                        if (printStatus === "printed" && allPrinted) {
+                        // if (printStatus === "printed" && allPrinted) {
+                        if (printStatus === "printed") {
                             this.notification.createNotification("تمت الطباعة بنجاح");
                             const updatePrintTable = {
                                 invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
@@ -559,7 +632,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             }
         },
     
-        async printSilently(docType, docName, printFormat, printType) {
+        printSilently: async function(docType, docName, printFormat, printType) {
             try {        
                 const response = await this.call.get('silent_print.utils.print_format.create_pdf', {
                     doctype: docType,
@@ -579,7 +652,6 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 return "printed";
             } catch (error) {
                 console.error('Silent Print Error:', error);
-
                 return "error";
             }
         },
@@ -623,6 +695,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     // console.error(error)
                 });
         },
+
         cancelInvoice: async function () {
             const recentOrders = usetoggleRecentOrder();
             let invoiceNo =

@@ -32,7 +32,8 @@
                 <select id="status"
                     class="mt-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange" @click="this.recentOrders.showPayment = false;">
-                    <option value="Unbilled">غير مؤكدة/غير مطبوعة</option>
+                    <option value="Unconfirmed">غير مؤكدة</option>
+                    <option value="Unbilled">مؤكدة/غير مطبوعة</option>
                     <option value="Draft">غير مدفوعة</option>
                     <option value="Recently Paid" v-if="auth.viewAllStatus === 0 && invoiceData.paidLimit > 0">مدفوعة مؤخرًا</option>
                     <option value="Paid" v-if="this.auth.viewAllStatus === 1">مدفوعة</option>
@@ -217,62 +218,80 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-2 rounded px-4 py-2 text-center" v-if="this.recentOrders.selectedStatus !== 'Draft' &&
-                recentOrders.selectedStatus !== 'Unbilled'
-                ">
+            <div
+                class="mt-2 rounded px-4 py-2 text-center"
+                v-if="this.recentOrders.selectedStatus !== 'Draft' &&
+                    recentOrders.selectedStatus !== 'Unbilled' &&
+                    recentOrders.selectedStatus !== 'Unconfirmed'"
+            >
                 <button type="button"
                     class="mb-2 mr-2 rounded-lg border border-gray-400 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     @click="this.invoiceData.printFunction()">
                     طباعة الإيصال
                 </button>
             </div>
-            <div class="mt-2 rounded px-4 py-2 text-center" v-if="this.recentOrders.selectedStatus === 'Draft' ||
-                recentOrders.selectedStatus === 'Unbilled'
-                ">
+            <div
+                class="mt-2 rounded px-4 py-2 text-center"
+                v-if="
+                    this.recentOrders.selectedStatus === 'Draft' ||
+                    recentOrders.selectedStatus === 'Unbilled' ||
+                    recentOrders.selectedStatus === 'Unconfirmed'
+                "
+            >
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     :class="{
-                'border-gray-200 text-gray-300':
-                    this.recentOrders.orderType === 'Aggregators',
-                'border-gray-300 text-gray-700':
-                    this.recentOrders.orderType !== 'Aggregators',
-            }" @click="
-                this.recentOrders.orderType !== 'Aggregators'
-                    ? this.recentOrders.editOrder()
-                    : ''
-                ">
+                        'border-gray-200 text-gray-300':
+                        this.recentOrders.orderType === 'Aggregators',
+                        'border-gray-300 text-gray-700':
+                        this.recentOrders.orderType !== 'Aggregators',
+                    }"
+                    @click="
+                        this.recentOrders.orderType !== 'Aggregators'
+                        ? this.recentOrders.editOrder()
+                        : ''
+                    "
+                    v-if="recentOrders.selectedStatus === 'Unconfirmed' || this.auth.allowed_for_edit_orders"
+                >
                     تعديل
                 </button>
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                    @click="this.invoiceData.printFunction(true)">
+                    @click="this.invoiceData.confirm_order()"
+                    v-if="recentOrders.selectedStatus === 'Unconfirmed'"
+                >
+                    تأكيد الطلب
+                </button>
+                <button type="button"
+                    class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                    @click="this.invoiceData.printFunction(true)"
+                    v-else-if="recentOrders.selectedStatus !== 'Unconfirmed'"
+                >
                     طباعة الإيصال
                 </button>
             </div>
-            <div class="mt-2 rounded px-4 py-2 text-center" v-if="this.recentOrders.selectedStatus === 'Draft' ||
-                this.recentOrders.selectedStatus === 'Unbilled'
-                ">
+            <div class="mt-2 rounded px-4 py-2 text-center"
+                v-if="this.recentOrders.selectedStatus === 'Draft' ||
+                    this.recentOrders.selectedStatus === 'Unbilled' ||
+                    this.recentOrders.selectedStatus === 'Unconfirmed'"
+            >
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                    @click="this.recentOrders.billing()">
+                    @click="this.recentOrders.billing()"
+                    v-if="recentOrders.selectedStatus === 'Draft'"    
+                >
                     الدفع
                 </button>
                 <button type="button"
-                    class="mb-2 mr-2 w-36 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                    :class="{
-                'border-gray-200 text-gray-300':
-                    this.recentOrders.invoicePrinted === 1 ||
-                    this.recentOrders.selectedStatus === 'Unbilled',
-                'border-gray-300 text-gray-700': !(
-                    this.recentOrders.invoicePrinted === 1 ||
-                    this.recentOrders.selectedStatus === 'Unbilled'
-                ),
-                    }" @click="
-                this.recentOrders.invoicePrinted === 0 &&
-                    this.recentOrders.selectedStatus === 'Draft'
-                    ? this.recentOrders.showCancelInvoiceModal()
-                    : ''
-                ">
+                    class="border-gray-300 text-gray-700 mb-2 mr-2 w-36 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                    @click="this.recentOrders.showCancelInvoiceModal()"
+                    v-if=" this.recentOrders.selectedStatus === 'Unconfirmed' ||
+                        ((this.recentOrders.selectedStatus === 'Draft' ||
+                        this.recentOrders.selectedStatus === 'Unbilled' ||
+                        this.recentOrders.selectedStatus === 'Unconfirmed') &&
+                        this.auth.allowed_for_cancel_orders)
+                    "
+                >
                     إلغاء الطلب
                 </button>
             </div>

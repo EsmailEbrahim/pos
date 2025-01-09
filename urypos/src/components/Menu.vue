@@ -572,7 +572,7 @@
                                 تحديث الطلب
                             </button>
                         </div>
-                        <div
+                        <!-- <div
                             class="col-span-2"
                             v-if="(this.recentOrders.invoicePrinted === 0 || this.table.invoicePrinted === 0) && !this.auth.cashier"
                         >
@@ -584,7 +584,7 @@
                             >
                                 إلغاء الطلب
                             </button>
-                        </div>
+                        </div> -->
                     </div>
                     <div
                         v-if="this.invoiceData.cancelInvoiceFlag === true"

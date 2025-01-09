@@ -25,6 +25,8 @@ export const useAuthStore = defineStore("auth", {
         activeDropdown: false,
         cashierisPosOpen: false,
         cashier: null,
+        allowed_for_edit_orders: false,
+        allowed_for_cancel_orders: false,
         viewItemImage: null,
         viewAllStatus: null,
         restrictTableOrder: null,
@@ -109,9 +111,9 @@ export const useAuthStore = defineStore("auth", {
                     router.push("/login");
                 });
         },
-        fetchUserRole() {
+        async fetchUserRole() {
             //Fetching role based on logged user
-            this.db
+            await this.db
                 .getDoc("User", this.sessionUser)
                 .then((doc) => {
                     this.call
@@ -131,6 +133,8 @@ export const useAuthStore = defineStore("auth", {
                             var billingRoles = result.message.role_allowed_for_billing.map(
                                 (role) => role.role
                             );
+                            this.allowed_for_edit_orders = this.userRole.includes(result.message.custom_role_allowed_for_edit_orders) || false;
+                            this.allowed_for_cancel_orders = this.userRole.includes(result.message.custom_role_allowed_for_cancel_orders) || false;
                             this.cashier = billingRoles.some((role) =>
                                 this.userRole.includes(role)
                             );

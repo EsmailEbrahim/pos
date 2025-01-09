@@ -5,6 +5,7 @@ import { useMenuStore } from "./Menu.js";
 import { useCustomerStore } from "./Customer.js";
 import { useNotifications } from "./Notification.js";
 import { useInvoiceDataStore } from "./invoiceData.js";
+import { useTableStore } from "./Table.js";
 import { useAlert } from "./Alert.js";
 import frappe from "./frappeSdk.js";
 
@@ -32,7 +33,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     currentPage: 1,
     paymentMethod: 0,
     editPrintedInvoice: 0,
-    selectedStatus: "Unbilled",
+    selectedStatus: "Unconfirmed",
     posProfile: "",
     searchOrder: "",
     searchTable: "",
@@ -60,6 +61,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     alert: useAlert(),
     call: frappe.call(),
     menu: useMenuStore(),
+    table: useTableStore(),
     customers: useCustomerStore(),
     notification: useNotifications(),
     invoiceData: useInvoiceDataStore(),
@@ -231,6 +233,8 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
           this.pastOrderdItem = pastOrder.items;
           this.recentWaiter = pastOrder.waiter;
           this.pastOrderType = pastOrder.order_type;
+          this.menu.comments = pastOrder.custom_order_comments;
+          this.table.selectedTable = pastOrder.restaurant_table;
           if (this.pastOrderType) {
             this.menu.selectedOrderType = pastOrder.order_type;
             this.menu.pickOrderType();
@@ -456,7 +460,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
         item.comment = "";
         item.qty = "";
       });
-      this.selectedStatus = "Unbilled";
+      this.selectedStatus = "Unconfirmed";
       this.menu.cart = [];
       this.draftInvoice = "";
       this.customers.selectedOrderType = "";

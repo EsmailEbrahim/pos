@@ -240,8 +240,45 @@
                             <div class="mt-2 flex justify-center" v-if="table.occupied === 1">
                                 <button
                                     type="button"
-                                    class="mb-2 me-2 inline-flex items-center rounded bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2557D6]/90 focus:outline-none focus:ring-4 focus:ring-[#2557D6]/50 dark:focus:ring-[#2557D6]/50"
+                                    class="mb-2 me-2 inline-flex items-center rounded px-2 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2557D6]/90 focus:outline-none focus:ring-4 focus:ring-[#2557D6]/50 dark:focus:ring-[#2557D6]/50"
+                                    :class="[
+                                        {
+                                            'bg-blue-700': !this.auth.restrictTableOrder,
+                                            'pointer-events-none bg-blue-400': this.auth.restrictTableOrder,
+                                        },
+                                    ]"
+                                    @click="!this.auth.restrictTableOrder && this.invoiceData.confirm_order(invoice_name=table.table_invoice)"
+                                    v-if="table.table_invoice && table.custom_is_confirmed === 0"
+                                >
+                                    تأكيد
+                                    <svg
+                                        class="svg-icon mr-2"
+                                        viewBox="0 0 24 24"
+                                        width="18"
+                                        height="18"
+                                        fill="white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M 12 24 C 5.372 24 0 18.628 0 12 C 0 5.372 5.372 0 12 0 c 6.628 0 12 5.372 12 12 C 24 18.628 18.628 24 12 24 z M 12 1.87 C 6.177 1.87 1.87 6.177 1.87 12 S 6.177 22.13 12 22.13 S 22.13 17.823 22.13 12 S 17.823 1.87 12 1.87 z"
+                                        />
+                                        <path
+                                            d="M 11.31 16.553 c -0.509 0 -0.994 -0.222 -1.325 -0.609 L 5.31 8.746 c -0.627 -0.732 -0.543 -1.835 0.189 -2.462 c 0.731 -0.626 1.834 -0.544 2.462 0.188 l 4.057 4.858 l 5.223 -6.48 c 0.621 -0.769 1.746 -0.889 2.517 -0.271 c 0.771 0.621 0.889 1.746 0.271 2.517 l -5.882 7.301 c -0.305 0.379 -0.763 0.602 -1.248 0.61 C 11.323 16.553 11.316 16.553 11.31 16.553 z"
+                                        />
+                                    </svg>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="mb-2 me-2 inline-flex items-center rounded px-2 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2557D6]/90 focus:outline-none focus:ring-4 focus:ring-[#2557D6]/50 dark:focus:ring-[#2557D6]/50"
+                                    :class="[
+                                        {
+                                            'bg-blue-700': !this.auth.restrictTableOrder,
+                                            'pointer-events-none bg-blue-400': this.auth.restrictTableOrder,
+                                        },
+                                    ]"
                                     @click="this.invoiceData.billing(table)"
+                                    v-else-if="!(table.table_invoice && table.custom_is_confirmed === 0)"
                                 >
                                     الفاتورة
                                     <svg
@@ -267,9 +304,7 @@
                                         this.auth.restrictTableOrder,
                                     },
                                     ]"
-                                    @click="
-                                    !this.auth.restrictTableOrder && this.table.routeToMenu(table)
-                                    "
+                                    @click="!this.auth.restrictTableOrder && this.table.routeToMenu(table)"
                                 >
                                     <svg
                                     aria-hidden="true"
