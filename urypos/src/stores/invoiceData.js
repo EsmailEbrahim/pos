@@ -639,7 +639,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     name: docName,
                     silent_print_format: printFormat,
                     no_letterhead: 1,
-                    _lang: "ar"
+                    _lang: "en"
                 });
         
                 const printService = new WebSocketPrinter();
