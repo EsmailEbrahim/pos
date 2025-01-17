@@ -34,6 +34,8 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         currency: null,
         qz_print: null,
         silent_print: null,
+        enable_kitchen_controller_print: null,
+        controllers_silent_printers: null,
         paidLimit: null,
         print_type: null,
         grandTotal: null,
@@ -78,6 +80,8 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.print_format = this.invoiceDetails.print_format;
                     this.qz_print = this.invoiceDetails.qz_print;
                     this.silent_print = this.invoiceDetails.silent_print;
+                    this.enable_kitchen_controller_print = this.invoiceDetails.enable_kitchen_controller_print;
+                    this.controllers_silent_printers = this.invoiceDetails.controllers_silent_printers;
                     this.qz_host = this.invoiceDetails.qz_host;
                     this.cashier_printer_name = this.invoiceDetails.cashier_printer_name;
                     this.cashier_silent_print_format = this.invoiceDetails.cashier_silent_print_format;
@@ -359,8 +363,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
         
                 if (result.message.status === "success") {
                     const KOTsPrinted = await this.printKOTs(invoiceNo);
+                    const InvoicePrinted = await this.printToKitchenController(invoiceNo, KOTsPrinted.kitchen_controller_roles);
         
-                    if (KOTsPrinted === "printed") {
+                    if (KOTsPrinted.status === "printed" && InvoicePrinted === "printed") {
                         window.location.reload();
                         return 200;
                     } else {
@@ -389,10 +394,37 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         // type: 'New Order',
                     };
                     const URY_KOTs = await this.call.get('ury.ury_pos.api.get_ury_kot_by_invoice_number', args);
+                    const URY_KOTs_docs = URY_KOTs.message.ury_kots;
         
-                    const printPromises = URY_KOTs.message.map((kot) =>
+                    const printPromises = URY_KOTs_docs.map((kot) =>
                         this.printSilently("URY KOT", kot.name, kot.production_silent_print_format, kot.production_silent_print_type)
                     );
+        
+                    const printResults = await Promise.all(printPromises);
+        
+                    if (printResults.every(result => result === "printed")) {
+                        return {'status': "printed", "kitchen_controller_roles": URY_KOTs.message.kitchen_controller_roles};
+                    } else {
+                        console.error(`Printing failed for invoice: ${invoiceNo}`);
+                        return {'status': "error"};
+                    }
+                }
+            } catch (error) {
+                console.error(`Error in printing process for invoice: ${invoiceNo}`, error);
+                return {'status': "error"};
+            }
+        },
+
+        printToKitchenController: async function (invoiceNo, kitchen_controller_roles) {
+            try {
+                if (this.print_type === "silent" && this.enable_kitchen_controller_print) {
+                    const printPromises = this.controllers_silent_printers
+                        .filter(controller_silent_printer => 
+                            kitchen_controller_roles.includes(controller_silent_printer.role)
+                        )
+                        .map(controller_silent_printer => 
+                            this.printSilently("POS Invoice", invoiceNo, controller_silent_printer.silent_print_format, controller_silent_printer.silent_print_type)
+                        );
         
                     const printResults = await Promise.all(printPromises);
         
@@ -402,6 +434,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         console.error(`Printing failed for invoice: ${invoiceNo}`);
                         return "error";
                     }
+                }
+                else {
+                    return "printed";
                 }
             } catch (error) {
                 console.error(`Error in printing process for invoice: ${invoiceNo}`, error);
