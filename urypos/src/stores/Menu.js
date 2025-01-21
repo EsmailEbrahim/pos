@@ -10,13 +10,7 @@ import { useAlert } from "./Alert.js";
 
 export const useMenuStore = defineStore("menu", {
     state: () => ({
-        orderTypeTranslations: {
-            "Dine In": "محلي",
-            "Take Away": "سفري",
-            "Phone In": "طلب عبر الهاتف",
-            "Delivery": "توصيل",
-            "Aggregators": "التطبيقات الوسيطة",
-        },
+        orderTypeTranslations: {},
         cart: [],
         item: [],
         items: [],
@@ -172,14 +166,26 @@ export const useMenuStore = defineStore("menu", {
             this.call
                 .get("ury.ury_pos.api.get_select_field_options")
                 .then((result) => {
+                    result.message.forEach((type) => {
+                        this.orderTypeTranslations[type.name] = type.name_arabic;
+                    });
+
                     this.orderType = result.message
                     .filter((option) => option.name !== "")
                     .map((option) => ({
                         ...option,
                         label: this.orderTypeTranslations[option.name] || option.name,
                     }));
-                    this.selectedOrderType = result.message[0]['name'];
-                    this.selectedOrderTypeLabel = this.orderTypeTranslations[result.message[0]['name']] || result.message[0]['name'];
+
+                    const defaultOrderType = result.message.find((type) => type.default);
+
+                    if (defaultOrderType) {
+                        this.selectedOrderType = defaultOrderType.name;
+                        this.selectedOrderTypeLabel = this.orderTypeTranslations[defaultOrderType.name] || defaultOrderType.name;
+                    } else if (result.message.length > 0) {
+                        this.selectedOrderType = result.message[0]["name"];
+                        this.selectedOrderTypeLabel = this.orderTypeTranslations[result.message[0]["name"]] || result.message[0]["name"];
+                    }
                 })
                 .catch((error) => console.error(error));
         },
