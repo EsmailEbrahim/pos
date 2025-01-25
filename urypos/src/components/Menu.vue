@@ -427,7 +427,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="relative col-span-2 z-20">
+                    <div
+                        v-if="menu.selectedOrderTypeRequireTable()"
+                        class="relative col-span-2 z-20"
+                    >
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center mx-2">
                             <svg
                                 class="h-6 w-6 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-500"

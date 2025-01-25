@@ -189,6 +189,26 @@ export const useMenuStore = defineStore("menu", {
                 })
                 .catch((error) => console.error(error));
         },
+        selectedOrderTypeRequireTable(order_type=null) {
+            if (order_type) {
+                const selectedType = this.orderType.find((type) => type.name === order_type);
+                return selectedType ? selectedType.require_a_table : false;
+            }
+            else {
+                const selectedType = this.orderType.find((type) => type.name === this.selectedOrderType);
+                return selectedType ? selectedType.require_a_table : false;
+            }
+        },
+        getDefaultTableForOrderType(order_type=null) {
+            if (order_type) {
+                const selectedType = this.orderType.find((type) => type.name === order_type);
+                return selectedType ? selectedType.default_table : null;
+            }
+            else {
+                const selectedType = this.orderType.find((type) => type.name === this.selectedOrderType);
+                return selectedType ? selectedType.default_table : null;
+            }
+        },
         clearPreviousData() {
             this.recentOrders.selectedTable = "";
             this.recentOrders.previousOrderdCustomer = ""

@@ -37,22 +37,22 @@ export const tabFunctions = defineStore("tabClick", {
         clickMenuTab() {
             // if (!this.auth.cashier && !this.table.selectedTable) {
             // if (!this.table.selectedTable && (this.menu.selectedOrderType == 'Dine In' || this.menu.selectedOrderType == 'Take Away')) {
-            if (!this.table.selectedTable) {
+            if (this.auth.cashier && !this.menu.selectedOrderType) {
                 this.alert
                     .createAlert(
-                        "لا توجد طاولة مُختارة",
-                        "الرجاء اختيار طاولة",
+                        "لا يوجد نوع طلب",
+                        "الرجاء اختيار نوع الطلب",
                         "موافق"
                     )
                     .then(() => {
                         router.push("/Table");
                     });
             }
-            if (this.auth.cashier && !this.menu.selectedOrderType) {
+            if (!this.table.selectedTable && this.menu.selectedOrderTypeRequireTable()) {
                 this.alert
                     .createAlert(
-                        "لا يوجد نوع طلب",
-                        "الرجاء اختيار نوع الطلب",
+                        "لا توجد طاولة مُختارة",
+                        "الرجاء اختيار طاولة",
                         "موافق"
                     )
                     .then(() => {

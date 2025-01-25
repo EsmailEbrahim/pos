@@ -263,6 +263,7 @@ export const useTableStore = defineStore("table", {
             cart.splice(0, cart.length);
             const getPreviousOrder = {
                 table: this.selectedTable,
+                from_pos: true,
             };
             this.call
                 .get(
@@ -364,6 +365,7 @@ export const useTableStore = defineStore("table", {
         async invoiceNumberFetching() {
             const tableInvoiceNumber = {
                 table: this.tableName,
+                from_pos: true,
             };
             try {
                 const result = await this.call.get(

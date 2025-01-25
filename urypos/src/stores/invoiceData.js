@@ -189,7 +189,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     room: this.table.selectedRoom,
                 };
                 // if (!this.auth.cashier && !numberOfPax) {
-                if (!numberOfPax && ordeType == 'Dine In') {
+                if (!numberOfPax && !invoice && this.menu.selectedOrderTypeRequireTable(ordeType)) {
                     this.alert.createAlert(
                         "رسالة",
                         "الرجاء تحديد عدد الأشخاص",
@@ -198,7 +198,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.showUpdateButtton = true;
                     this.invoiceUpdating = false;
                 // } else if (!this.auth.cashier && !selectedTables) {
-                } else if (!selectedTables && ordeType == 'Dine In') {
+                } else if (!selectedTables && this.menu.selectedOrderTypeRequireTable(ordeType)) {
                     this.alert.createAlert(
                         "رسالة",
                         "الرجاء تحديد طاولة",
@@ -211,6 +211,11 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.showUpdateButtton = true;
                     this.invoiceUpdating = false;
                 } else {
+                    if (!creatingInvoice.invoice) {
+                        if(!this.menu.selectedOrderTypeRequireTable(creatingInvoice.order_type)) {
+                            creatingInvoice.table = this.menu.getDefaultTableForOrderType(creatingInvoice.order_type);
+                        }
+                    }
                     this.call
                         .post(
                             "ury.ury.doctype.ury_order.ury_order.sync_order",
@@ -318,6 +323,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             let tables = table.name;
             const getOrderInvoice = {
                 table: tables,
+                from_pos: true,
             };
             this.call
                 .get(

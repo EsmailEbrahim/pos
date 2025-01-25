@@ -213,6 +213,8 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
       this.pastOrderdItem = "";
       this.previousOrderdCustomer = "";
       this.pastOrderType = "";
+      this.menu.selectedOrderType = "";
+      this.menu.selectedOrderTypeLabel = "";
       let items = this.menu.items;
       this.draftInvoice = this.invoiceNumber;
       this.editPrintedInvoice = this.invoicePrinted;
@@ -237,7 +239,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
           this.table.selectedTable = pastOrder.restaurant_table;
           if (this.pastOrderType) {
             this.menu.selectedOrderType = pastOrder.order_type;
-            this.menu.pickOrderType();
+            this.menu.selectedOrderTypeLabel = this.menu.orderTypeTranslations[pastOrder.order_type] || pastOrder.order_type;
             if (this.pastOrderType === "Aggregators") {
               this.menu.selectedAggregator = pastOrder.customer;
             }
@@ -454,6 +456,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     },
     clearData() {
       this.menu.selectedOrderType = "";
+      this.menu.selectedOrderTypeLabel = "";
       this.isLoading = false;
       this.pastOrderType = "";
       this.menu.items.forEach((item) => {

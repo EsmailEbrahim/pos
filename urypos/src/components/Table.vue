@@ -13,6 +13,7 @@
                     حدد صالة أو جناح
                 </label> -->
                 <div
+                    v-if="menu.selectedOrderTypeRequireTable()"
                     class="flex flex-wrap gap-4"
                 >
                     <button
@@ -29,7 +30,7 @@
                 </div>
             </div>
 
-            <div
+            <!-- <div
                 v-if="!this.auth.cashier"
                 @click="this.table.toggleTableTypeSwitch"
                 class="relative ml-1 mb-3 mt-2 inline-block h-10 w-28 cursor-pointer rounded bg-blue-700 lg:col-span-1 md:col-span-1"
@@ -46,9 +47,13 @@
                     class="absolute left-0 h-10 w-9 rounded border bg-white transition-transform duration-300 ease-in-out"
                 >
                 </div>
-            </div>
+            </div> -->
 
-            <div class="grid justify-center items-start lg:col-span-3 md:col-span-3 p-2" :class="[this.menu.selectedOrderType === 'Aggregators' ? 'grid-cols-2' : 'grid-cols-1']" v-if="this.auth.cashier">
+            <div
+                v-if="this.auth.cashier"
+                class="grid justify-center items-start lg:col-span-3 md:col-span-3 p-2"
+                :class="[this.menu.selectedOrderType === 'Aggregators' ? 'grid-cols-2' : 'grid-cols-1']"
+            >
                 <div class="relative ml-2">
                     <div class="relative">
                         <label
@@ -101,7 +106,11 @@
             </div>
         </div>
 
-        <div v-if="!this.table.isTakeaeay" class="m-auto mt-1 py-1">
+        <!-- v-if="!this.table.isTakeaeay" -->
+        <div
+            v-if="menu.selectedOrderTypeRequireTable()"
+            class="m-auto mt-1 py-1"
+        >
             <div class="flow-root">
                 <div
                     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 bg-opacity-50 text-lg"
@@ -336,9 +345,9 @@
                 </div>
             </div>
         </div>
-        <div v-else>
+        <!-- <div v-else>
             <takeAwayTable />
-        </div>
+        </div> -->
 
         <div
             v-if="table.showModal"
