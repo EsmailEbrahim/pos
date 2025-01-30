@@ -41,6 +41,14 @@
                 <div class="flex">
                     <button
                         style="user-select: none;"
+                        class="ml-2 hover:bg-slate-300 text-blue-700 font-semibold px-6 py-1 rounded-md"
+                        @click="toggleLanguage()"
+                        :title="$i18n.locale == 'ar' ? 'تغيير اللغة إلى English' : 'Change Language to العربية'"
+                    >
+                        {{ $i18n.locale == 'ar' ? 'AR' : 'EN' }}
+                    </button>
+                    <button
+                        style="user-select: none;"
                         class="ml-2 hover:bg-slate-300 text-blue font-semibold px-6 py-1 rounded-md"
                         @click="reloadPage()"
                         title="تحديث"
@@ -326,12 +334,17 @@ export default {
   },
   methods: {
     reloadPage() {
-    if (typeof window !== "undefined") {
-        window.location.reload();
-    } else {
-        console.error("Window object is not available.");
-    }
-    }
-  }
+        if (typeof window !== "undefined") {
+            window.location.reload();
+        } else {
+            console.error("Window object is not available.");
+        }
+    },
+    toggleLanguage() {
+        const newLang = this.$i18n.locale === 'ar' ? 'en' : 'ar';
+        this.$i18n.locale = newLang;
+        localStorage.setItem('lang', newLang);
+    },
+  },
 };
 </script>

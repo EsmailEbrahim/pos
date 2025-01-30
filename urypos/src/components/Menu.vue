@@ -95,8 +95,9 @@
                                         'mb-2 text-center text-lg font-normal leading-normal':
                                             !this.auth.viewItemImage,
                                     }"
+                                    :title="$i18n.locale === 'ar' ? item.item_name : item.item"
                                 >
-                                    {{ item.item_name }}
+                                    {{ $i18n.locale === 'ar' ? item.item_name : item.item }}
                                 </h2>
                                 <h2
                                     class="mt-0"

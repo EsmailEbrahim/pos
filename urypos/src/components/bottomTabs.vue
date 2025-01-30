@@ -49,7 +49,7 @@
                         'text-blue-600': this.tabClick.currentTab === '/Table',
                         },
                     ]"
-                    >الطاولات</span
+                    >{{ $t('tables') }}</span
                     >
                 </router-link>
 
@@ -86,7 +86,7 @@
                         'text-blue-600': this.tabClick.currentTab === '/Menu',
                         },
                     ]"
-                    >الطلبات</span
+                    >{{ $t('orders') }}</span
                     ></router-link
                 >
                 <!-- <router-link
@@ -194,7 +194,7 @@
                             'text-blue-600': this.tabClick.currentTab === '/recentOrder',
                             },
                         ]"
-                    >سجل الطلبات</span
+                    >{{ $t('recentOrders') }}</span
                     >
                 </router-link>
             </div>

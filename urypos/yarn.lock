@@ -92,6 +92,27 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
+"@intlify/core-base@11.0.1":
+  version "11.0.1"
+  resolved "https://registry.npmjs.org/@intlify/core-base/-/core-base-11.0.1.tgz"
+  integrity sha512-NAmhw1l/llM0HZRpagR/ChJTNymW4ll6/4EDSJML5c8L5Hl/+k6UyF8EIgE6DeHpfheQujkSRngauViHqq6jJQ==
+  dependencies:
+    "@intlify/message-compiler" "11.0.1"
+    "@intlify/shared" "11.0.1"
+
+"@intlify/message-compiler@11.0.1":
+  version "11.0.1"
+  resolved "https://registry.npmjs.org/@intlify/message-compiler/-/message-compiler-11.0.1.tgz"
+  integrity sha512-5RFH8x+Mn3mbjcHXnb6KCXGiczBdiQkWkv99iiA0JpKrNuTAQeW59Pjq/uObMB0eR0shnKYGTkIJxum+DbL3sw==
+  dependencies:
+    "@intlify/shared" "11.0.1"
+    source-map-js "^1.0.2"
+
+"@intlify/shared@11.0.1":
+  version "11.0.1"
+  resolved "https://registry.npmjs.org/@intlify/shared/-/shared-11.0.1.tgz"
+  integrity sha512-lH164+aDDptHZ3dBDbIhRa1dOPQUp+83iugpc+1upTOWCnwyC1PVis6rSWNMMJ8VQxvtHQB9JMib48K55y0PvQ==
+
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.npmjs.org/@isaacs/cliui/-/cliui-8.0.2.tgz"
@@ -1898,6 +1919,15 @@ vue-eslint-parser@^9.4.0:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.6"
+
+vue-i18n@^11.0.1:
+  version "11.0.1"
+  resolved "https://registry.npmjs.org/vue-i18n/-/vue-i18n-11.0.1.tgz"
+  integrity sha512-pWAT8CusK8q9/EpN7V3oxwHwxWm6+Kp2PeTZmRGvdZTkUzMQDpbbmHp0TwQ8xw04XKm23cr6B4GL72y3W8Yekg==
+  dependencies:
+    "@intlify/core-base" "11.0.1"
+    "@intlify/shared" "11.0.1"
+    "@vue/devtools-api" "^6.5.0"
 
 vue-resize@^2.0.0-alpha.1:
   version "2.0.0-alpha.1"

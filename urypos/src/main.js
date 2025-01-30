@@ -15,6 +15,20 @@ const pinia = createPinia();
 const app = createApp(App);
 const auth = reactive(new Auth());
 
+// Translation
+import { createI18n } from 'vue-i18n';
+import ar from './locales/ar.json';
+import en from './locales/en.json';
+const i18n = createI18n({
+	locale: localStorage.getItem('lang') || 'ar',
+	fallbackLocale: 'ar',
+	messages: {
+		ar,
+		en,
+	}
+});
+app.use(i18n);
+
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/style.css';
 app.use(PerfectScrollbarPlugin)
