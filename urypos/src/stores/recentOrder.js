@@ -445,7 +445,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             }
             
             this.showPayment = false;
-            this.notification.createNotification("تم الدفع");
+            // this.notification.createNotification("تم الدفع");
             this.getPosInvoice(this.selectedStatus, 10, 0);
             this.clearData();
             this.menu.pickOrderType();

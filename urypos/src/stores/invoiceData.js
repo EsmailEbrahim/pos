@@ -375,12 +375,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         return 200;
                     } else {
                         console.error("Error in printing KOTs!");
-                        if (KOTsPrinted.status !== "printed") {
-                            this.alert.createAlert("خطأ", "خطأ في طباعة KOTs!", "موافق");
-                        }
-                        if (InvoicePrinted !== "printed") {
-                            this.alert.createAlert("خطأ", "خطأ في طباعة الفاتورة إلى Kitchen Control!", "موافق");
-                        }
+                        // if (KOTsPrinted.status !== "printed") {
+                        //     this.alert.createAlert("خطأ", "خطأ في طباعة KOTs!", "موافق");
+                        // }
+                        // if (InvoicePrinted !== "printed") {
+                        //     this.alert.createAlert("خطأ", "خطأ في طباعة الفاتورة إلى Kitchen Control!", "موافق");
+                        // }
                     }
                 } else if (result?.message?.status === "error") {
                     console.error("Error to confirm order: ", result?.message?.error);
@@ -505,7 +505,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     // if(this.cashier_printer_name) {
                         const print = await printWithQz(this.qz_host, this.cashier_printer_name, result?.message?.html);
                         if (print === "printed") {
-                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            // this.notification.createNotification("تمت الطباعة بنجاح");
                             const updatePrintTable = {
                                 invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
                             };
@@ -538,7 +538,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         do {
                             const res = await printingCall();
                             if (res === "Success") {
-                                this.notification.createNotification("تمت الطباعة بنجاح");
+                                // this.notification.createNotification("تمت الطباعة بنجاح");
                                 const sendObj = {
                                     invoice: invoiceNo,
                                 };
@@ -577,7 +577,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         do {
                             const res = await networkPrintPrintingCall();
                             if (res === "Success") {
-                                this.notification.createNotification("تمت الطباعة بنجاح");
+                                // this.notification.createNotification("تمت الطباعة بنجاح");
                                 const sendObj = {
                                     invoice: invoiceNo,
                                 };
@@ -718,6 +718,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 return "printed";
             } catch (error) {
                 console.error('Silent Print Error:', error);
+                this.alert.createAlert("خطأ", "خطأ في الطباعة إلى الطابعة: " + printType + "!", "موافق");
                 return "error";
             }
         },
