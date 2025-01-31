@@ -375,7 +375,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                         return 200;
                     } else {
                         console.error("Error in printing KOTs!");
-                        this.alert.createAlert("خطأ", "خطأ في طباعة KOTs!", "موافق");
+                        if (KOTsPrinted.status !== "printed") {
+                            this.alert.createAlert("خطأ", "خطأ في طباعة KOTs!", "موافق");
+                        }
+                        if (InvoicePrinted !== "printed") {
+                            this.alert.createAlert("خطأ", "خطأ في طباعة الفاتورة إلى Kitchen Control!", "موافق");
+                        }
                     }
                 } else if (result?.message?.status === "error") {
                     console.error("Error to confirm order: ", result?.message?.error);
@@ -615,7 +620,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
 
                         // if (printStatus === "printed" && allPrinted) {
                         if (printStatus === "printed") {
-                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            // this.notification.createNotification("تمت الطباعة بنجاح");
                             const updatePrintTable = {
                                 invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
                             };
@@ -628,7 +633,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                                 .catch((error) => console.error(error, "printed"));
                         } else {
                             console.error("Printing failed:", printStatus);
-                            this.notification.createNotification("حدث خطأ أثناء الطباعة");
+                            this.notification.createNotification("حدث خطأ أثناء الطباعة في " + this.cashier_silent_print_type);
                         }
                     } catch (error) {
                         console.error("Error in printing process:", error);
@@ -642,7 +647,7 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     this.call
                         .post("ury.ury.api.ury_print.print_pos_page", sendObj)
                         .then((result) => {
-                            this.notification.createNotification("تمت الطباعة بنجاح");
+                            // this.notification.createNotification("تمت الطباعة بنجاح");
                             if(this.restaurant_settings.restaurant_system_settings.show_a_print_preview) {
                                 try {
                                     this.openPrintFormatPDF(tableInvoiceName ? tableInvoiceName : invoiceNo);
@@ -728,8 +733,9 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
             try {
                 const res = await loadQzPrinter(url, qz_host);
                 print(qz_host);
-                if (res === "success")
+                if (res === "success") {
                     this.notification.createNotification("تم تحميل الطابعة");
+                }
             } catch (err) {
                 this.alert.createAlert("رسالة", err.message, "موافق");
             }
