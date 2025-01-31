@@ -33,7 +33,7 @@
                     class="mt-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     v-model="this.recentOrders.selectedStatus" @change="this.recentOrders.handleStatusChange" @click="this.recentOrders.showPayment = false;">
                     <option value="Unconfirmed">غير مؤكدة</option>
-                    <option value="Unbilled">مؤكدة/غير مطبوعة</option>
+                    <option value="Unbilled">مؤكدة/طاولات غير فارغة</option>
                     <option value="Draft">غير مدفوعة</option>
                     <option value="Recently Paid" v-if="auth.viewAllStatus === 0 && invoiceData.paidLimit > 0">مدفوعة مؤخرًا</option>
                     <option value="Paid" v-if="this.auth.viewAllStatus === 1">مدفوعة</option>
@@ -264,11 +264,18 @@
                 </button>
                 <button type="button"
                     class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                    @click="this.invoiceData.emptyTable()"
+                    v-else-if="recentOrders.selectedStatus === 'Unbilled'"
+                >
+                    تفريغ الطاولة
+                </button>
+                <!-- <button type="button"
+                    class="mb-2 mr-2 w-36 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
                     @click="this.invoiceData.printFunction(true)"
                     v-else-if="recentOrders.selectedStatus !== 'Unconfirmed'"
                 >
                     طباعة الإيصال
-                </button>
+                </button> -->
             </div>
             <div class="mt-2 rounded px-4 py-2 text-center"
                 v-if="this.recentOrders.selectedStatus === 'Draft' ||
@@ -450,12 +457,20 @@
                         {{ this.invoiceData.currency }}
                     </p>
                 </div>
-                <button
-                    @click="this.recentOrders.makePayment();"
-                    class="mt-10 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 cursor-pointer"
-                >
-                    تأكيد الدفع
-                </button>
+                <div class="flex flex-col space-y-2">
+                    <button
+                        @click="this.recentOrders.makePayment(true);"
+                        class="mt-2 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 cursor-pointer"
+                    >
+                        تأكيد الدفع وطباعة الإيصال
+                    </button>
+                    <button
+                        @click="this.recentOrders.makePayment(false);"
+                        class="mt-2 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 cursor-pointer"
+                    >
+                        تأكيد الدفع
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -406,7 +406,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
     },
 
     //Making Payment
-    makePayment: async function () {
+    makePayment: async function (printInvoice=false) {
       this.isLoading = true;
       const invoicePayment = {
         table: this.selectedTable,
@@ -440,6 +440,10 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
             invoicePayment
           )
           .then(() => {
+            if(printInvoice) {
+              this.invoiceData.printFunction(true);
+            }
+            
             this.showPayment = false;
             this.notification.createNotification("تم الدفع");
             this.getPosInvoice(this.selectedStatus, 10, 0);

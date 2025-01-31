@@ -339,13 +339,12 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                     ) {
                         this.alert.createAlert(
                             "رسالة",
-                            "تم حظر الطباعة، الطاولة مسندة إلى " +
-                            result.message.waiter,
+                            "الطاولة مسندة إلى " + result.message.waiter,
                             "موافق"
                         );
                     } else {
-                        this.isPrinting = true;
-                        this.printFunction(false, this.tableInvoiceNo);
+                        // this.isPrinting = true;
+                        this.emptyTable(this.tableInvoiceNo);
                     }
                 })
                 .catch((error) => console.error(error));
@@ -448,6 +447,27 @@ export const useInvoiceDataStore = defineStore("invoiceData", {
                 console.error(`Error in printing process for invoice: ${invoiceNo}`, error);
                 return "error";
             }
+        },
+
+        emptyTable: async function (tableInvoiceName = '') {
+            let invoiceNo =
+                this.recentOrders.invoiceNumber ||
+                this.tableInvoiceNo ||
+                this.invoiceNumber;
+                
+            const updatePrintTable = {
+                invoice: tableInvoiceName ? tableInvoiceName : invoiceNo,
+            };
+            this.call
+                .post("ury.ury.api.ury_print.qz_print_update", updatePrintTable)
+                .then(() => {
+                    window.location.reload();
+                    return 200;
+                })
+                .catch((error) => {
+                    console.error("حدث خطأ أثناء تفريغ الطاولة", error);
+                    this.notification.createNotification("حدث خطأ أثناء تفريغ الطاولة!");
+                });
         },
 
         printFunction: async function (isFromRecentOrders = false, tableInvoiceName = '') {

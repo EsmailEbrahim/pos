@@ -289,7 +289,7 @@
                                     @click="this.invoiceData.billing(table)"
                                     v-else-if="!(table.table_invoice && table.custom_is_confirmed === 0)"
                                 >
-                                    الفاتورة
+                                    تفريغ الطاولة
                                     <svg
                                         class="svg-icon mr-2"
                                         viewBox="0 0 24 24"
