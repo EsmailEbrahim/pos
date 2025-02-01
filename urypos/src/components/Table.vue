@@ -173,7 +173,7 @@
                                         <a
                                         href="#"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        @click="this.table.showModal = true"
+                                        @click="this.table.showModal = true; this.table.hideDropdown();"
                                         >تغيير الطاولة</a
                                         >
                                     </li>
@@ -181,9 +181,18 @@
                                         <a
                                         href="#"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        @click="this.table.showModalCaptainTransfer = true"
+                                        @click="this.table.showModalCaptainTransfer = true; this.table.hideDropdown();"
                                         >تغيير الكابتن</a
                                         >
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            @click="get_table_order_status(table.name, table.table_invoice); this.table.hideDropdown();"
+                                        >
+                                            عرض حالة الطلب
+                                        </a>
                                     </li>
                                     </ul>
                                 </div>
@@ -529,6 +538,65 @@
             </div>
             </div>
         </div>
+
+        <div
+            v-if="showModal"
+            class="status_modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            @click.self="closeModal()"
+        >
+            <div
+                class="w-11/12 max-w-4xl rounded-lg bg-white p-5 shadow-lg dark:bg-gray-800"
+                style="max-height: 80vh; overflow: hidden;"
+            >
+                <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-200">
+                    تفاصيل الطلبات للطاولة {{ currentTable }}
+                </h2>
+                
+                <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    عرض حالة الطلبات المرتبطة بهذه الطاولة.
+                </p>
+                
+                <PerfectScrollbar
+                    class="overflow-hidden"
+                    style="max-height: 60vh; overflow-y: auto;"
+                    :options="{ suppressScrollX: true }"
+                >
+                    <div v-for="(order, index) in orderStatus" :key="order.order_id" class="mb-4 p-4 border rounded-lg bg-gray-100 dark:bg-gray-700">
+                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
+                            رقم الطلب: {{ order.order_id }}
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            الطاولة: {{ order.table }} | الفاتورة: {{ order.invoice }}
+                        </p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            الحالة: {{ $t(order.order_status) }} | نوع الطلب: {{ order.type }}
+                        </p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            الوقت المنقضي: {{ order.elapsed_time }} دقيقة |  الوقت المتبقي: {{ order.remaining_time }} دقيقة
+                        </p>
+                        <div>
+                            <h4 class="mt-2 text-md font-semibold text-gray-700 dark:text-gray-300">
+                                العناصر:
+                            </h4>
+                            <ul>
+                                <li v-for="(item, i) in order.items" :key="i" class="text-sm text-gray-800 dark:text-gray-200">
+                                    - {{ item.item_name }}: {{ item.quantity }} (زمن التحضير: {{ item.preparation_time }} دقيقة) <span class="text-green-700" v-if="item.is_ready">-> جاهز</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </PerfectScrollbar>
+
+                <div class="flex justify-end space-x-2 my-2">
+                    <button
+                        @click="closeModal"
+                        class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
+                    >
+                        إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script>
@@ -544,6 +612,13 @@ export default {
     components: {
         takeAwayTable,
     },
+    data() {
+        return {
+            showModal: false,
+            currentTable: "",
+            orderStatus: null,
+        }
+    },
     setup() {
         const table = useTableStore();
         const invoiceData = useInvoiceDataStore();
@@ -551,7 +626,43 @@ export default {
         const menu = useMenuStore();
         const recentOrders = usetoggleRecentOrder();
         
-        return { table, invoiceData, auth, menu,recentOrders };
+        return {
+            table,
+            invoiceData,
+            auth,
+            menu,
+            recentOrders,
+        };
+    },
+    methods: {
+        async get_table_order_status(table_name, invoice_name) {
+            try {
+                const args = {
+                    table: table_name,
+                    invoice: invoice_name,
+                };
+    
+                const response = await this.auth.call.get("ury.ury_pos.api.get_order_status", args);
+                
+                const data = response;
+                this.orderStatus = data.message;
+                this.currentTable = table_name;
+                this.showModal = true;
+            } catch (error) {
+                console.error("Error fetching order status:", error);
+            }
+        },
+        closeModal() {
+            this.showModal = false;
+            this.currentTable = "";
+            this.orderStatus = null;
+        },
     },
 };
 </script>
+
+<style scoped>
+.status_modal {
+    z-index: 9999;
+}
+</style>

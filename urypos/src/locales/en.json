@@ -1,5 +1,7 @@
 {
     "tables": "Tables",
     "recentOrders": "Recent Orders",
-    "orders": "Orders"
+    "orders": "Orders",
+    "Ready For Prepare": "Ready For Prepare",
+    "Served": "Served"
 }
