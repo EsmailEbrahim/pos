@@ -3,5 +3,11 @@
     "recentOrders": "Recent Orders",
     "orders": "Orders",
     "Ready For Prepare": "Ready For Prepare",
-    "Served": "Served"
+    "Served": "Served",
+    "New Order": "New Order",
+    "Order Modified": "Order Modified",
+    "Cancelled": "Cancelled",
+    "Partially cancelled": "Partially cancelled",
+    "Duplicate": "Duplicate",
+    "Ready for Serving": "Ready for Serving"
 }

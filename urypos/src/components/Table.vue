@@ -546,43 +546,150 @@
         >
             <div
                 class="w-11/12 max-w-4xl rounded-lg bg-white p-5 shadow-lg dark:bg-gray-800"
-                style="max-height: 80vh; overflow: hidden;"
+                style="max-height: 85vh; overflow: hidden;"
             >
-                <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-200">
-                    تفاصيل الطلبات للطاولة {{ currentTable }}
-                </h2>
-                
-                <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    عرض حالة الطلبات المرتبطة بهذه الطاولة.
-                </p>
+                <div class="flex items-center justify-between">
+                    <div class="">
+                        <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-200">
+                            تفاصيل الطلبات للطاولة {{ currentTable }}
+                        </h2>
+                        
+                        <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                            عرض حالة الطلبات المرتبطة بهذه الطاولة.
+                        </p>
+                    </div>
+                    <button
+                        style="user-select: none;"
+                        class="hover:bg-slate-300 text-blue font-semibold px-2 py-2 rounded-md"
+                        @click="refreshModal()"
+                        title="تحديث"
+                    >
+                        <svg class="w-4 h-4 text-blue-800 dark:text-blue" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
+                        </svg>          
+                    </button>
+                </div>
                 
                 <PerfectScrollbar
-                    class="overflow-hidden"
+                    class="overflow-hidden grid grid-cols-12 gap-2"
                     style="max-height: 60vh; overflow-y: auto;"
                     :options="{ suppressScrollX: true }"
                 >
-                    <div v-for="(order, index) in orderStatus" :key="order.order_id" class="mb-4 p-4 border rounded-lg bg-gray-100 dark:bg-gray-700">
-                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
-                            رقم الطلب: {{ order.order_id }}
-                        </h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            الطاولة: {{ order.table }} | الفاتورة: {{ order.invoice }}
-                        </p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            الحالة: {{ $t(order.order_status) }} | نوع الطلب: {{ order.type }}
-                        </p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            الوقت المنقضي: {{ order.elapsed_time }} دقيقة |  الوقت المتبقي: {{ order.remaining_time }} دقيقة
-                        </p>
-                        <div>
-                            <h4 class="mt-2 text-md font-semibold text-gray-700 dark:text-gray-300">
-                                العناصر:
-                            </h4>
-                            <ul>
-                                <li v-for="(item, i) in order.items" :key="i" class="text-sm text-gray-800 dark:text-gray-200">
-                                    - {{ item.item_name }}: {{ item.quantity }} (زمن التحضير: {{ item.preparation_time }} دقيقة) <span class="text-green-700" v-if="item.is_ready">-> جاهز</span>
-                                </li>
-                            </ul>
+                    <div 
+                        v-for="(order, index) in orderStatus" 
+                        :key="order.order_id" 
+                        class="lg:col-span-6 md:col-span-6 col-span-12 p-4 border rounded-lg bg-gray-100 dark:bg-gray-700 transition-transform transform hover:scale-105"
+                        :class="{
+                            'border-red-500': order.remaining_time < 5,
+                            'border-yellow-500': order.remaining_time >= 5 && order.remaining_time < 10,
+                            'border-green-500': order.remaining_time >= 10
+                        }"
+                    >
+                        <div class="flex justify-between items-center cursor-pointer" @click="toggleOrderCollapse(order.order_id)">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
+                                رقم الطلب: {{ order.order_id }}
+                            </h3>
+                            <svg 
+                                class="w-5 h-5 transition-transform transform"
+                                :class="{ 'rotate-180': !order.isCollapsed }"
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24" 
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+
+                        <div v-if="order.isCollapsed">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                الطاولة: {{ order.table }} | الفاتورة: {{ order.invoice }}
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                الحالة: 
+                                <span 
+                                    class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium"
+                                    :class="{
+                                        'bg-green-100 text-green-800': order.order_status === 'Served',
+                                        'bg-red-100 text-red-800': order.order_status === 'Ready for Serving',
+                                        'bg-yellow-100 text-yellow-800': order.order_status === 'Ready For Prepare',
+                                    }"
+                                >
+                                    <svg 
+                                        v-if="order.order_status === 'Served'" 
+                                        class="w-4 h-4 mr-1" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24" 
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <svg 
+                                        v-if="order.order_status === 'Ready For Prepare'" 
+                                        class="w-4 h-4 mr-1" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24" 
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <svg 
+                                        v-if="order.order_status === 'Ready for Serving'" 
+                                        class="w-4 h-4 mr-1" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24" 
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ $t(order.order_status) }}
+                                </span> 
+                                | نوع الطلب: {{ $t(order.type) }}
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                الوقت المنقضي: 
+                                <span :class="{
+                                    'text-red-500': order.elapsed_time > 30,
+                                    'text-yellow-500': order.elapsed_time > 15 && order.elapsed_time <= 30,
+                                    'text-green-500': order.elapsed_time <= 15
+                                }">
+                                    {{ order.elapsed_time }} دقيقة
+                                </span> 
+                                | الوقت المتبقي: 
+                                <span :class="{
+                                    'text-red-500': order.remaining_time < 5,
+                                    'text-yellow-500': order.remaining_time >= 5 && order.remaining_time < 10,
+                                    'text-green-500': order.remaining_time >= 10
+                                }">
+                                    {{ order.remaining_time }} دقيقة
+                                </span>
+                            </p>
+                            <div class="mt-2">
+                                <h4 class="text-md font-semibold text-gray-700 dark:text-gray-300">
+                                    العناصر:
+                                </h4>
+                                <ul>
+                                    <li 
+                                        v-for="(item, i) in order.items" 
+                                        :key="i" 
+                                        class="text-sm text-gray-800 dark:text-gray-200 flex items-center"
+                                    >
+                                        <span class="mr-2">- {{ item.item_name }}: {{ item.quantity }} (زمن التحضير: {{ item.preparation_time }} دقيقة)</span>
+                                        <span 
+                                            v-if="item.is_ready" 
+                                            class="text-green-500 flex items-center"
+                                        >
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            جاهز
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </PerfectScrollbar>
@@ -590,7 +697,7 @@
                 <div class="flex justify-end space-x-2 my-2">
                     <button
                         @click="closeModal"
-                        class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
+                        class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500 transition-colors"
                     >
                         إغلاق
                     </button>
@@ -616,6 +723,7 @@ export default {
         return {
             showModal: false,
             currentTable: "",
+            currentTableInvoice: "",
             orderStatus: null,
         }
     },
@@ -647,15 +755,27 @@ export default {
                 const data = response;
                 this.orderStatus = data.message;
                 this.currentTable = table_name;
+                this.currentTableInvoice = invoice_name;
                 this.showModal = true;
             } catch (error) {
                 console.error("Error fetching order status:", error);
             }
         },
+        refreshModal() {
+            this.orderStatus = null;
+            this.get_table_order_status(this.currentTable, this.currentTableInvoice);
+        },
         closeModal() {
             this.showModal = false;
             this.currentTable = "";
+            this.currentTableInvoice = "";
             this.orderStatus = null;
+        },
+        toggleOrderCollapse(orderId) {
+            const order = this.orderStatus.find(order => order.order_id === orderId);
+            if (order) {
+                order.isCollapsed = !order.isCollapsed;
+            }
         },
     },
 };

@@ -2,6 +2,12 @@
     "tables": "الطاولات",
     "recentOrders": "سجل الطلبات",
     "orders": "الطلبات",
-    "Ready For Prepare": "جاهز للتحضير",
-    "Served": "تم تقديمه"
+    "Ready For Prepare": "قيد التحضير",
+    "Served": "تم التقديم",
+    "New Order": "طلب جديد",
+    "Order Modified": "طلب معدل",
+    "Cancelled": "ملغي",
+    "Partially cancelled": "ملغي بشكل جزئي",
+    "Duplicate": "مكرر",
+    "Ready for Serving": "جاهز للتقديم"
 }
