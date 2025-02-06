@@ -12,11 +12,11 @@ export const useAlert = defineStore("alert", {
                 backdrop.classList.add(
                     "fixed",
                     "inset-0",
-                    "z-50",
                     "bg-black",
                     "opacity-50",
                     "backdrop-blur-md"
                 );
+                backdrop.style.zIndex = '99998';
                 document.body.appendChild(backdrop);
 
                 // Create the modal container
@@ -24,7 +24,6 @@ export const useAlert = defineStore("alert", {
                 modal.classList.add(
                     "fixed",
                     "top-10",
-                    "z-50",
                     "lg:left-1/2",
                     "transform",
                     "lg:-translate-x-1/2",
@@ -34,6 +33,7 @@ export const useAlert = defineStore("alert", {
                     "shadow-lg",
                     "w-100"
                 );
+                modal.style.zIndex = '99999';
                 const mediaQuery = window.matchMedia("(max-width: 767px)");
                 if (mediaQuery.matches) {
                     modal.classList.remove("lg:left-1/2", "lg:-translate-x-1/2");

@@ -173,13 +173,14 @@
 
     <div
         v-if="this.destroyData.showDestroyModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        class="void-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        @click.self="this.destroyData.showDestroyModal = false; this.destroyData.clearDestroyData();"
     >
         <div
-            class="w-96 rounded-lg bg-white p-5 shadow-lg dark:bg-gray-800"
-            style="max-height: 80vh; overflow: hidden;"
+            class="w-120 rounded-lg bg-white p-5 shadow-lg dark:bg-gray-800"
+            style="max-height: 90vh; overflow: hidden;"
         >
-            <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-200">
+            <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-200">
                 حدد عناصر للإتلاف
             </h2>
             <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
@@ -187,43 +188,61 @@
             </p>
             
             <PerfectScrollbar
-                class="overflow-hidden"
-                style="max-height: 60vh; overflow-y: auto;"
+                class="overflow-hidden grid grid-cols-12 gap-2"
+                style="max-height: 70vh; overflow-y: auto;"
                 :options="{ suppressScrollX: true }"
             >
-                <div class="ml-4 mb-4">
-                    <label for="cart-item" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div class="col-span-12 grid grid-cols-12 gap-2">
+                    <label for="cart-item" class="col-span-8 block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         اختر العنصر:
                     </label>
-                    <select
-                        id="cart-item"
-                        v-model="this.destroyData.destroyItem"
-                        class="mb-2 w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
-                        @change="this.destroyData.updateItem"
-                    >
-                        <option value=""></option>
-                        <option v-for="(item, index) in this.menu.cart" :key="index" :value="item">
-                            {{ item.item_name }} - الكمية: {{ item.qty }}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="ml-4 mb-4">
-                    <label for="quantity" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label for="quantity" class="col-span-4 block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         الكمية للإتلاف:
                     </label>
-                    <input
-                        id="quantity"
-                        type="number"
-                        v-model="this.destroyData.destroyQuantity"
-                        placeholder="أدخل الكمية..."
-                        min="1"
-                        :max="this.destroyData.destroyItem?.quantity || 1"
-                        class="w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
-                    />
+                </div>
+                <div v-for="(destroyItem, index) in this.destroyData.destroyItems" :key="index" class="ml-4 col-span-12 grid grid-cols-12 gap-2 border rounded-md p-1">
+                    <div class="mb-2 col-span-12 grid grid-cols-12 gap-2">
+                        <div class="col-span-8 flex items-center">
+                            <span class="text-xs ml-1 opacity-50">{{ index + 1 }}-</span>
+                            <select
+                                id="cart-item"
+                                v-model="destroyItem.item"
+                                class="mb-2 w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                                @change="this.destroyData.updateItem(index)"
+                            >
+                                <option value=""></option>
+                                <option v-for="(item, itemIndex) in this.menu.cart" :key="itemIndex" :value="item">
+                                    {{ $i18n.locale === 'ar' ? item.item_name : item.item }} - الكمية: {{ item.qty }}
+                                </option>
+                            </select>
+                        </div>
+        
+                        <div class="col-span-4">
+                            <input
+                                id="quantity"
+                                type="number"
+                                v-model="destroyItem.quantity"
+                                placeholder="أدخل الكمية..."
+                                min="1"
+                                :max="destroyItem.item?.qty || 1"
+                                class="w-full rounded border p-2 dark:bg-gray-700 dark:text-gray-200"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                <div class="ml-4 mb-4">
+                <div class="ml-4 mb-1 col-span-12">
+                    <button
+                        type="button"
+                        class="rounded-full bg-blue-500 text-white py-1 p-4 hover:bg-blue-700 focus:outline-none"
+                        @click="this.destroyData.addDestroyItem"
+                        title="إضافة عنصر"
+                    >
+                        + إضافة عنصر
+                    </button>
+                </div>
+
+                <div class="ml-4 col-span-12">
                     <label for="accountability" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         اختر المسؤول عن التلف:
                     </label>
@@ -240,7 +259,7 @@
                     </select>
                 </div>
 
-                <div class="ml-4 mb-4">
+                <div class="ml-4 col-span-12">
                     <label for="notes" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         ملاحظات:
                     </label>
@@ -253,7 +272,7 @@
                     ></textarea>
                 </div>
 
-                <div class="ml-4 mb-4">
+                <div class="ml-4 mb-2 col-span-12">
                     <label for="username" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                         اسم المستخدم:
                     </label>
@@ -348,3 +367,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.void-modal {
+    z-index: 9999;
+}
+</style>

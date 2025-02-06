@@ -17,8 +17,7 @@ export const useDestroyStore = defineStore("destroy", {
         destroyUsername: null,
         destroyPassword: null,
         destroyInvoiceNo: null,
-        destroyItem: null,
-        destroyQuantity: null,
+        destroyItems: [{ item: null, quantity: null }],
         destroyAccountability: null,
         destroyNotes: null,
         
@@ -36,8 +35,7 @@ export const useDestroyStore = defineStore("destroy", {
     actions: {
         async confirmDestroy() {
             if (
-                this.destroyItem &&
-                this.destroyQuantity &&
+                this.destroyItems.length > 0 &&
                 this.destroyAccountability &&
                 this.destroyUsername &&
                 this.destroyPassword
@@ -50,8 +48,7 @@ export const useDestroyStore = defineStore("destroy", {
 
                     const response = await this.call.post("ury.ury.api.void_items.process_void_item", {
                         invoice_no: this.destroyInvoiceNo,
-                        item: this.destroyItem,
-                        quantity: this.destroyQuantity,
+                        items: this.destroyItems,
                         accountability: this.destroyAccountability,
                         notes: this.destroyNotes,
                         username: this.destroyUsername,
@@ -78,11 +75,15 @@ export const useDestroyStore = defineStore("destroy", {
             }
         },
 
-        updateItem() {
-            if (this.destroyItem) {
-                this.destroyQuantity = this.destroyItem.qty;
+        addDestroyItem() {
+            this.destroyItems.push({ item: null, quantity: null });
+        },
+
+        updateItem(index) {
+            if (this.destroyItems[index].item) {
+                this.destroyItems[index].quantity = this.destroyItems[index].item.qty;
             } else {
-                this.destroyQuantity = null;
+                this.destroyItems[index].quantity = null;
             }
         },
 
@@ -90,8 +91,7 @@ export const useDestroyStore = defineStore("destroy", {
             this.destroyUsername = null;
             this.destroyPassword = null;
             this.destroyInvoiceNo = null;
-            this.destroyItem = null;
-            this.destroyQuantity = null;
+            this.destroyItems = [{ item: null, quantity: null }];
             this.destroyAccountability = null;
             this.destroyNotes = null;
         }
