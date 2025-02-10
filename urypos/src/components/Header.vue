@@ -135,7 +135,7 @@
                                     <a
                                         href="#"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        @click="this.destroyData.showDestroyModal = true"
+                                        @click="this.getInvoiceData()"
                                     >
                                         إتلاف
                                     </a>
@@ -181,7 +181,7 @@
             style="max-height: 90vh; overflow: hidden;"
         >
             <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-200">
-                حدد عناصر للإتلاف
+                حدد عناصر للإتلاف (رقم الطلب: {{ this.invoiceNo }})
             </h2>
             <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
                 الرجاء إدخال التفاصيل المطلوبة لتأكيد عملية الإتلاف.
@@ -211,7 +211,7 @@
                                 @change="this.destroyData.updateItem(index)"
                             >
                                 <option value=""></option>
-                                <option v-for="(item, itemIndex) in this.menu.cart" :key="itemIndex" :value="item">
+                                <option v-for="(item, itemIndex) in this.invoiceItems" :key="itemIndex" :value="item">
                                     {{ $i18n.locale === 'ar' ? item.item_name : item.item }} - الكمية: {{ item.qty }}
                                 </option>
                             </select>
@@ -298,7 +298,7 @@
 
             <div class="flex justify-end space-x-2">
                 <button
-                    @click="this.destroyData.confirmDestroy"
+                    @click="this.destroyData.confirmDestroy(this.invoiceNo)"
                     class="rounded bg-blue-600 px-4 py-2 mx-4 text-white hover:bg-blue-700"
                 >
                     موافق
@@ -327,6 +327,8 @@ import { usetoggleRecentOrder } from "@/stores/recentOrder.js";
 import { useMenuStore } from "@/stores/Menu.js";
 import { useInvoiceDataStore } from "@/stores/invoiceData.js";
 import { useDestroyStore } from "@/stores/Destroy.js";
+import { useRoute, useRouter } from 'vue-router';
+import { useAlert } from "@/stores/Alert.js";
 
 export default {
   name: "Header",
@@ -341,14 +343,19 @@ export default {
     const menu = useMenuStore();
     const invoiceData = useInvoiceDataStore();
     const destroyData = useDestroyStore();
+    const route = useRoute();
+    const router = useRouter();
+    const alert = useAlert();
 
-    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu, invoiceData, destroyData };
+    return { auth, posOpen, posClose, tabClick, table, settings, recentOrders, menu, invoiceData, destroyData, route, router, alert };
   },
   data() {
     return {
         PosSystemLogoPath: PosSystemLogo,
         ERPNextPosLogoPath: ERPNextPosLogo,
         system_settings: this.settings,
+        invoiceNo: null,
+        invoiceItems: [],
     };
   },
   methods: {
@@ -363,6 +370,35 @@ export default {
         const newLang = this.$i18n.locale === 'ar' ? 'en' : 'ar';
         this.$i18n.locale = newLang;
         localStorage.setItem('lang', newLang);
+    },
+    getInvoiceData() {
+        this.invoiceNo = null;
+        this.invoiceItems = [];
+        if (this.route.name === 'recentOrder' && this.route.path === '/recentOrder' && this.recentOrders.showOrder) {
+            if (this.recentOrders.invoiceNumber && this.recentOrders.recentOrderListItems) {
+                this.invoiceNo = this.recentOrders.invoiceNumber;
+                const items = this.recentOrders.recentOrderListItems;
+                items.forEach((item) => {
+                    this.invoiceItems.push(
+                        {
+                            'item': item.item,
+                            'item_name': item.item_name,
+                            'qty': item.qty,
+                            'rate': item.amount,
+                        }
+                    )
+                });
+
+                this.destroyData.showDestroyModal = true;
+            }
+        } else if (this.route.name === 'Menu' && this.route.path === '/Menu' && ((this.invoiceData.invoiceNumber || this.table.invoiceNo) && this.menu.cart)) {
+            this.invoiceNo = this.invoiceData.invoiceNumber || this.table.invoiceNo;
+            this.invoiceItems = this.menu.cart;
+
+            this.destroyData.showDestroyModal = true;
+        } else {
+            this.alert.createAlert("خطأ", "لا توجد فاتورة أو طلب لعملية الإتلاف", "موافق");
+        }
     },
   },
 };

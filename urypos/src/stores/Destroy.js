@@ -33,7 +33,7 @@ export const useDestroyStore = defineStore("destroy", {
 
     },
     actions: {
-        async confirmDestroy() {
+        async confirmDestroy(invoiceNo) {
             if (
                 this.destroyItems.length > 0 &&
                 this.destroyAccountability &&
@@ -41,10 +41,11 @@ export const useDestroyStore = defineStore("destroy", {
                 this.destroyPassword
             ) {
                 try {
-                    this.destroyInvoiceNo =
-                        this.recentOrders.invoiceNumber ||
-                        this.invoiceData.invoiceNumber ||
-                        this.table.invoiceNo;
+                    // this.destroyInvoiceNo =
+                    //     this.recentOrders.invoiceNumber ||
+                    //     this.invoiceData.invoiceNumber ||
+                    //     this.table.invoiceNo;
+                    this.destroyInvoiceNo = invoiceNo;
 
                     const response = await this.call.post("ury.ury.api.void_items.process_void_item", {
                         invoice_no: this.destroyInvoiceNo,
