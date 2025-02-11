@@ -73,7 +73,7 @@
                             <div
                                 class="rounded border px-2 py-2 text-right shadow"
                                 v-for="item in this.menu.paginatedItems"
-                                :key="item.item"
+                                :key="item.item + item.qty"
                             >
                                 <div v-if="this.auth.viewItemImage" class="w-full h-24">
                                     <div v-if="item.item_imgae" class="w-full h-full">
@@ -151,6 +151,7 @@
                                             (this.recentOrders.editPrintedInvoice === 0 ||
                                             this.auth.removeTableOrderItem === 1) &&
                                             this.menu.decrementItemQuantity(item)"
+                                        :disabled="item?.has_old_qty && item.qty === item?.old_qty"
                                     >
                                         -
                                         <!-- :disabled="this.recentOrders.restaurantTable" -->
@@ -176,20 +177,25 @@
                                             <label for="quantity" class="mt-6 block text-right text-gray-900 dark:text-white">
                                                 الكمية
                                             </label>
-                                            <input type="number" id="quantity"
+                                            <input
+                                                :min="this.menu.item?.has_old_qty ? this.menu.item.old_qty : 0"
+                                                type="number"
+                                                id="quantity"
                                                 class="mt-4 w-full appearance-none rounded border p-2 leading-tight text-gray-900 shadow focus:outline-none"
-                                                v-model="this.menu.quantity" v-bind:readonly="this.recentOrders.editPrintedInvoice === 1 && this.auth.removeTableOrderItem === 0"
+                                                v-model="this.menu.quantity"
+                                                v-bind:readonly="this.recentOrders.editPrintedInvoice === 1 && this.auth.removeTableOrderItem === 0"
                                             />
                                                 <!-- :disabled="this.recentOrders.restaurantTable" -->
-                                            <label for="comments" class="mt-6 block text-right text-gray-900 dark:text-white">
+                                            <label for="comment" class="mt-6 block text-right text-gray-900 dark:text-white">
                                                 الملاحظات
                                             </label>
-                                            <input type="text" id="Comments"
+                                            <input type="text" id="Comment"
                                                 class="mt-4 w-full rounded border p-2 leading-tight text-gray-900 shadow focus:outline-none"
-                                                v-model="this.menu.itemComments" />
+                                                v-model="this.menu.itemComment" />
                                         </div>
                                         <div class="flex justify-start">
-                                            <button @click="this.menu.addToCartAndUpdateQty(item); this.menu.showDialog=false;"
+                                            <button
+                                                @click="handleAddToCart(this.menu.item)"
                                                 class="mt-8 rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600">
                                                 إضافة
                                             </button>
@@ -497,7 +503,17 @@
                                 {{ cart_item.item_name }}
                             </div>
                             <div class="col-span-2 border-l cursor-pointer" @click="this.menu.showModal(cart_item);">
-                                {{ cart_item.qty }}
+                                <span
+                                    v-if="cart_item?.has_old_qty && ((cart_item.qty - cart_item.old_qty) > 0)"
+                                >
+                                    <span class="text-red-500">
+                                        {{ cart_item.old_qty }}
+                                    </span>
+                                     -> 
+                                </span>
+                                <span :class="{'text-green-500': cart_item?.has_old_qty && (cart_item.old_qty !== cart_item.qty)}">
+                                    {{ cart_item.qty }}
+                                </span>
                             </div>
                             <div class="col-span-2 border-l">
                                 {{ parseFloat(cart_item.rate).toFixed(2) }}
@@ -506,7 +522,22 @@
                                 {{ parseFloat(cart_item.qty * cart_item.rate).toFixed(2) }}
                             </div>
                             <div class="col-span-2 flex">
+                                <div
+                                    v-if="!cart_item?.has_old_qty"
+                                    class="text-green-500 text-xs text-center"
+                                    style="transform: rotate(270deg); display: inline-block;"
+                                >
+                                    جديد
+                                </div>
+                                <div
+                                    v-if="cart_item?.has_old_qty && cart_item.qty !== cart_item.old_qty"
+                                    class="text-blue-500 text-xs text-center"
+                                    style="transform: rotate(270deg); display: inline-block;"
+                                >
+                                    مُعدل
+                                </div>
                                 <button
+                                    v-if="!cart_item?.has_old_qty"
                                     class="p-2 text-center"
                                     type="button"
                                     @click="(this.recentOrders.editPrintedInvoice === 0 || this.auth.removeTableOrderItem === 1) && this.menu.removeItemFromCart(index)"
@@ -658,6 +689,7 @@
     import { useInvoiceDataStore } from "@/stores/invoiceData.js";
     import { useCustomerStore } from "@/stores/Customer.js";
     import { useTableStore } from "@/stores/Table.js";
+    import { useAlert } from "@/stores/Alert.js";
 
 
     export default {
@@ -668,13 +700,14 @@
         },
         setup() {
             const menu = useMenuStore();
+            const alert = useAlert();
             const auth = useAuthStore();
             const recentOrders = usetoggleRecentOrder();
             const invoiceData = useInvoiceDataStore();
             const customers = useCustomerStore();
             const table = useTableStore();
 
-            return { menu, auth, recentOrders, invoiceData, customers, table };
+            return { menu, auth, recentOrders, invoiceData, customers, table, alert };
         },
         name: "Menu",
         components: {
@@ -688,6 +721,22 @@
             }
             this.customers.pickCustomerGroup();
             this.customers.pickCustomerTerritory();
+        },
+        methods: {
+            handleAddToCart(item) {
+                if (!item?.has_old_qty) {
+                    this.menu.addToCartAndUpdateQty(item);
+                    this.menu.showDialog = false;
+                }
+                else if (item.has_old_qty){
+                    if ((this.menu.quantity - item.old_qty) >= 0) {
+                        this.menu.addToCartAndUpdateQty(item);
+                        this.menu.showDialog = false;
+                    } else {
+                        this.alert.createAlert("خطأ", "لا يمكن أن تكون الكمية الجديدة أقل من السابقة!", "موافق")
+                    }
+                }
+            },
         },
     };
 </script>

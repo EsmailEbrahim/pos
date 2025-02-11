@@ -247,7 +247,7 @@ export const useTableStore = defineStore("table", {
         },
         async addToSelectedTables(table) {
             this.selectedTable = table.name;
-            await this.getMenu();
+            // await this.getMenu();
 
             if (table.is_take_away === 1) {
                 this.isTakeAway = "Take Away";
@@ -255,7 +255,8 @@ export const useTableStore = defineStore("table", {
             let previousOrderdNumberOfPax = "";
             this.previousOrderdItem = "";
             this.invoiceNo = "";
-            let items = this.tableMenu;
+            let items = this.menu.items;
+            // let items = this.tableMenu;
             items.forEach((item) => {
                 item.qty = "";
             });
@@ -296,7 +297,7 @@ export const useTableStore = defineStore("table", {
                                     });
                                 });
                         } else {
-                            this.notification.createNotification("Past Order Fetched");
+                            // this.notification.createNotification("Past Order Fetched");
                         }
                     } else {
                         router.push("/Menu");
@@ -315,18 +316,20 @@ export const useTableStore = defineStore("table", {
                         customers.customerFavouriteItems = "";
                     }
 
+                    this.menu.comments = this.previousOrder.custom_order_comments;
+
                     items.forEach((item) => {
-                        const previousItem =
-                            this.previousOrderdItem &&
-                            this.previousOrderdItem.find(
-                                (previousItem) => previousItem.item_name === item.item_name
-                            );
+                        const previousItem = this.previousOrderdItem && this.previousOrderdItem.find(
+                            (previousItem) => previousItem.item_name === item.item_name
+                        );
                         if (previousItem && !item.qty) {
                             const itemIndex = cart.findIndex((obj) => obj.item === item.item);
                             const itemIndexExists = itemIndex !== -1;
                             if (!itemIndexExists) {
                                 item.qty = previousItem.qty;
-                                item.comment = "";
+                                item.comment = previousItem.comment;
+                                item.has_old_qty = true;
+                                item.old_qty = previousItem.qty;
                                 cart.push(item);
                             }
                         }

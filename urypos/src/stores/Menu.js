@@ -22,7 +22,7 @@ export const useMenuStore = defineStore("menu", {
         quantity: "",
         comments: "",
         searchTerm: "",
-        itemComments: "",
+        itemComment: "",
         perPage: 20,
         currentPage: 1,
         aggregatorId: null,
@@ -364,7 +364,7 @@ export const useMenuStore = defineStore("menu", {
             this.showDialog = true;
             this.quantity = item.qty;
             this.item = item;
-            this.itemComments = item.comment;
+            this.itemComment = item.comment;
         },
 
         addToCartAndUpdateQty() {
@@ -378,13 +378,17 @@ export const useMenuStore = defineStore("menu", {
             ) {
                 if (!item.qty) {
                     this.$set(item, "qty", this.quantity);
+                    this.$set(item, "comment", this.itemComment);
                 } else {
                     item.qty = this.quantity;
-                    item.comment = this.itemComments;
+                    item.comment = this.itemComment;
                 }
             }
 
             this.showDialog = false;
+            this.item = [];
+            this.quantity = "";
+            this.itemComment = "";
         },
 
         getitemQty(item) {
@@ -419,7 +423,7 @@ export const useMenuStore = defineStore("menu", {
                 item_qty -= previousItem.qty;
             }
             if (itemIndexExists) {
-                item.comment = "";
+                item.comment = this.cart[itemIndex].comment || "";
                 this.cart[itemIndex].qty++;
                 let message = `تم تحديث كمية '${item.item}' في الطلب إلى: ${item.qty}`;
                 // this.notification.createNotification(message);

@@ -268,7 +268,7 @@ export const usetoggleRecentOrder = defineStore("recentOrders", {
               const itemIndexExists = itemIndex !== -1;
               if (!itemIndexExists) {
                 item.qty = previousItem.qty;
-                item.comments = "";
+                item.comment = previousItem.comment;
                 cart.push(item);
               }
             }
